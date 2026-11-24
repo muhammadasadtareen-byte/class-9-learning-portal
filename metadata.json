@@ -1,0 +1,6 @@
+{
+  "name": "Class 9 Learning Portal",
+  "description": "Personal FBISE Class 9 (2027-2028) learning portal with multi-subject management, textbook document analysis, English/Urdu notes, solved exercises, MCQ tests, PDF export, and AI Subject Tutor.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

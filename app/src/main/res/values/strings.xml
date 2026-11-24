@@ -1,0 +1,17 @@
+<resources>
+    <string name="app_name">Class 9 Learning Portal</string>
+    <string name="portal_subtitle">FBISE Pakistan · Session 2027–2028</string>
+    <string name="sign_in_title">Personal FBISE Class 9 Study Portal</string>
+    <string name="sign_in_description">Sign in with your authorized Google account to securely store subjects, textbooks, notes, solved exercises, MCQ tests, and progress across devices.</string>
+    <string name="sign_in_google">Sign in with Google</string>
+    <string name="nav_subjects">Subjects</string>
+    <string name="nav_dashboard">Progress</string>
+    <string name="nav_admin">Parent Admin</string>
+    <string name="add_subject">Add Subject</string>
+    <string name="search_subjects_hint">Search subjects or codes…</string>
+    <string name="resume_studying">Resume Last Topic</string>
+    <string name="upload_material">Upload Material</string>
+    <string name="export_pdf">Export A4 PDF</string>
+    <string name="export_backup">Backup Data (JSON)</string>
+    <string name="sign_out">Sign Out</string>
+</resources>

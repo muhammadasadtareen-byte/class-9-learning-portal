@@ -1,0 +1,402 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Global default-deny safety net
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // --- Shared Hardened Primitives ---
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() >= 1 && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    function isValidTs(val) {
+      return val is timestamp && val <= request.time;
+    }
+
+    function isStr(val, minLen, maxLen) {
+      return val is string && val.size() >= minLen && val.size() <= maxLen;
+    }
+
+    function isStrList(val, maxSize) {
+      return val is list && val.size() <= maxSize && (val.size() == 0 || val[0] is string);
+    }
+
+    // --- Validation Blueprints ---
+    function isValidStudentProfile(data, userId) {
+      return data.userId == userId &&
+             isStr(data.studentName, 1, 80) &&
+             isStr(data.className, 1, 30) &&
+             isStr(data.board, 1, 60) &&
+             isStr(data.session, 1, 30) &&
+             data.parentModeEnabled is bool &&
+             data.urduSupportEnabled is bool &&
+             isStr(data.lastStudiedSubjectId, 0, 128) &&
+             isStr(data.lastStudiedChapterId, 0, 128) &&
+             isStr(data.lastStudiedTopicTitle, 0, 200) &&
+             data.seededDefaults is bool &&
+             isValidTs(data.createdAt) &&
+             isValidTs(data.updatedAt);
+    }
+
+    function isValidSubject(data, userId) {
+      return data.userId == userId &&
+             isStr(data.name, 1, 80) &&
+             isStr(data.code, 0, 24) &&
+             isStr(data.description, 0, 400) &&
+             isStr(data.iconKey, 1, 40) &&
+             isStr(data.customIconUri, 0, 600) &&
+             isStr(data.accentColorKey, 1, 30) &&
+             data.enabled is bool &&
+             data.languageMode in ['ENGLISH_URDU', 'URDU_PRIMARY', 'ENGLISH_PRIMARY'] &&
+             isStr(data.curriculumSession, 0, 60) &&
+             data.curriculumVerified is bool &&
+             isStr(data.curriculumWarning, 0, 500) &&
+             isStr(data.teachingStrategy, 0, 2000) &&
+             data.sortOrder is int && data.sortOrder >= 0 && data.sortOrder <= 500 &&
+             data.chapterCount is int && data.chapterCount >= 0 && data.chapterCount <= 200 &&
+             data.completedChapterCount is int && data.completedChapterCount >= 0 && data.completedChapterCount <= 200 &&
+             data.materialCount is int && data.materialCount >= 0 && data.materialCount <= 500 &&
+             isValidTs(data.createdAt) &&
+             isValidTs(data.updatedAt);
+    }
+
+    function isValidStudyMaterial(data, userId) {
+      return data.userId == userId &&
+             isValidId(data.subjectId) &&
+             isStr(data.fileName, 1, 200) &&
+             isStr(data.mimeType, 1, 120) &&
+             data.category in ['TEXTBOOK', 'SCANNED_BOOK', 'CURRICULUM_SLO', 'MODEL_PAPER', 'PAST_PAPER', 'MARKING_SCHEME', 'STUDY_NOTES', 'WORD_DOC', 'PAGE_IMAGE'] &&
+             data.fileSizeBytes is int && data.fileSizeBytes >= 0 && data.fileSizeBytes <= 524288000 &&
+             isStr(data.localUri, 0, 600) &&
+             data.processingStatus in ['UPLOADED', 'PROCESSING', 'PROCESSED', 'PARTIAL_WARNING', 'ERROR'] &&
+             isStr(data.statusMessage, 0, 500) &&
+             isStr(data.sessionYearDetected, 0, 60) &&
+             data.verifiedOfficialSource is bool &&
+             isStr(data.extractedSummary, 0, 20000) &&
+             isStr(data.extractedText, 0, 120000) &&
+             data.pageCount is int && data.pageCount >= 0 && data.pageCount <= 2000 &&
+             isStr(data.unreadablePagesNote, 0, 500) &&
+             isValidTs(data.createdAt) &&
+             isValidTs(data.updatedAt);
+    }
+
+    function isValidChapter(data, userId) {
+      return data.userId == userId &&
+             isValidId(data.subjectId) &&
+             data.chapterNumber is int && data.chapterNumber >= 1 && data.chapterNumber <= 100 &&
+             isStr(data.title, 1, 160) &&
+             isStr(data.urduTitle, 0, 160) &&
+             isStr(data.pageReference, 0, 80) &&
+             isStr(data.introduction, 0, 3000) &&
+             isStr(data.urduIntroduction, 0, 3000) &&
+             isStrList(data.learningObjectives, 30) &&
+             isStrList(data.officialSlos, 40) &&
+             isStrList(data.topics, 40) &&
+             isStr(data.completeNotes, 0, 40000) &&
+             isStr(data.shortNotes, 0, 20000) &&
+             isStr(data.definitions, 0, 20000) &&
+             isStr(data.formulasAndConcepts, 0, 20000) &&
+             isStr(data.solvedExamples, 0, 20000) &&
+             isStr(data.solvedExercises, 0, 40000) &&
+             isStr(data.importantQuestions, 0, 25000) &&
+             isStr(data.chapterSummary, 0, 10000) &&
+             isStr(data.sourceBasis, 0, 300) &&
+             data.completed is bool &&
+             data.masteryPercent is int && data.masteryPercent >= 0 && data.masteryPercent <= 100 &&
+             data.lastQuizScorePercent is int && data.lastQuizScorePercent >= 0 && data.lastQuizScorePercent <= 100 &&
+             isValidTs(data.createdAt) &&
+             isValidTs(data.updatedAt);
+    }
+
+    function isValidMcqBank(data, userId) {
+      return data.userId == userId &&
+             isValidId(data.subjectId) &&
+             isValidId(data.chapterId) &&
+             isStr(data.chapterTitle, 1, 160) &&
+             data.questions is list && data.questions.size() <= 60 && (data.questions.size() == 0 || data.questions[0] is map) &&
+             isStrList(data.shortTestQuestions, 25) &&
+             isStrList(data.longTestQuestions, 15) &&
+             isStr(data.answerKeySummary, 0, 30000) &&
+             isValidTs(data.createdAt) &&
+             isValidTs(data.updatedAt);
+    }
+
+    function isValidTestAttempt(data, userId) {
+      return data.userId == userId &&
+             isValidId(data.subjectId) &&
+             isStr(data.subjectName, 1, 80) &&
+             isValidId(data.chapterId) &&
+             isStr(data.chapterTitle, 1, 160) &&
+             data.totalQuestions is int && data.totalQuestions >= 1 && data.totalQuestions <= 100 &&
+             data.correctAnswers is int && data.correctAnswers >= 0 && data.correctAnswers <= data.totalQuestions &&
+             data.percentage is int && data.percentage >= 0 && data.percentage <= 100 &&
+             isStrList(data.weakTopics, 20) &&
+             data.durationSeconds is int && data.durationSeconds >= 0 && data.durationSeconds <= 18000 &&
+             isValidTs(data.createdAt);
+    }
+
+    function isValidTutorMessage(data, userId) {
+      return data.userId == userId &&
+             isValidId(data.subjectId) &&
+             isStr(data.chapterId, 0, 128) &&
+             data.role in ['USER', 'TUTOR'] &&
+             isStr(data.content, 1, 20000) &&
+             isStr(data.urduContent, 0, 15000) &&
+             isStr(data.sourceNote, 0, 400) &&
+             isValidTs(data.createdAt);
+    }
+
+    // --- User Root Profile ---
+    match /users/{userId} {
+      allow get: if isOwner(userId) && isValidId(userId);
+      allow list: if false;
+
+      allow create: if isOwner(userId) &&
+                       isValidId(userId) &&
+                       incoming().keys().hasAll([
+                         'userId', 'studentName', 'className', 'board', 'session',
+                         'parentModeEnabled', 'urduSupportEnabled', 'lastStudiedSubjectId',
+                         'lastStudiedChapterId', 'lastStudiedTopicTitle', 'seededDefaults',
+                         'createdAt', 'updatedAt'
+                       ]) &&
+                       incoming().keys().hasOnly([
+                         'userId', 'studentName', 'className', 'board', 'session',
+                         'parentModeEnabled', 'urduSupportEnabled', 'lastStudiedSubjectId',
+                         'lastStudiedChapterId', 'lastStudiedTopicTitle', 'seededDefaults',
+                         'createdAt', 'updatedAt'
+                       ]) &&
+                       isValidStudentProfile(incoming(), userId);
+
+      allow update: if isOwner(userId) &&
+                       isValidId(userId) &&
+                       isValidStudentProfile(incoming(), userId) &&
+                       incoming().userId == existing().userId &&
+                       incoming().createdAt == existing().createdAt &&
+                       incoming().diff(existing()).affectedKeys().hasOnly([
+                         'studentName', 'className', 'board', 'session',
+                         'parentModeEnabled', 'urduSupportEnabled', 'lastStudiedSubjectId',
+                         'lastStudiedChapterId', 'lastStudiedTopicTitle', 'seededDefaults',
+                         'updatedAt'
+                       ]);
+
+      allow delete: if isOwner(userId) && isValidId(userId);
+
+      // --- Dynamic Subjects ---
+      match /subjects/{subjectId} {
+        allow get: if isOwner(userId) && isValidId(subjectId);
+        allow list: if isOwner(userId);
+
+        allow create: if isOwner(userId) &&
+                         isValidId(subjectId) &&
+                         incoming().keys().hasAll([
+                           'userId', 'name', 'code', 'description', 'iconKey', 'customIconUri',
+                           'accentColorKey', 'enabled', 'languageMode', 'curriculumSession',
+                           'curriculumVerified', 'curriculumWarning', 'teachingStrategy',
+                           'sortOrder', 'chapterCount', 'completedChapterCount', 'materialCount',
+                           'createdAt', 'updatedAt'
+                         ]) &&
+                         incoming().keys().hasOnly([
+                           'userId', 'name', 'code', 'description', 'iconKey', 'customIconUri',
+                           'accentColorKey', 'enabled', 'languageMode', 'curriculumSession',
+                           'curriculumVerified', 'curriculumWarning', 'teachingStrategy',
+                           'sortOrder', 'chapterCount', 'completedChapterCount', 'materialCount',
+                           'createdAt', 'updatedAt'
+                         ]) &&
+                         isValidSubject(incoming(), userId);
+
+        allow update: if isOwner(userId) &&
+                         isValidId(subjectId) &&
+                         isValidSubject(incoming(), userId) &&
+                         incoming().userId == existing().userId &&
+                         incoming().createdAt == existing().createdAt &&
+                         incoming().diff(existing()).affectedKeys().hasOnly([
+                           'name', 'code', 'description', 'iconKey', 'customIconUri',
+                           'accentColorKey', 'enabled', 'languageMode', 'curriculumSession',
+                           'curriculumVerified', 'curriculumWarning', 'teachingStrategy',
+                           'sortOrder', 'chapterCount', 'completedChapterCount', 'materialCount',
+                           'updatedAt'
+                         ]);
+
+        allow delete: if isOwner(userId) && isValidId(subjectId);
+      }
+
+      // --- Uploaded Study Materials ---
+      match /materials/{materialId} {
+        allow get: if isOwner(userId) && isValidId(materialId);
+        allow list: if isOwner(userId);
+
+        allow create: if isOwner(userId) &&
+                         isValidId(materialId) &&
+                         incoming().keys().hasAll([
+                           'userId', 'subjectId', 'fileName', 'mimeType', 'category', 'fileSizeBytes',
+                           'localUri', 'processingStatus', 'statusMessage', 'sessionYearDetected',
+                           'verifiedOfficialSource', 'extractedSummary', 'extractedText', 'pageCount',
+                           'unreadablePagesNote', 'createdAt', 'updatedAt'
+                         ]) &&
+                         incoming().keys().hasOnly([
+                           'userId', 'subjectId', 'fileName', 'mimeType', 'category', 'fileSizeBytes',
+                           'localUri', 'processingStatus', 'statusMessage', 'sessionYearDetected',
+                           'verifiedOfficialSource', 'extractedSummary', 'extractedText', 'pageCount',
+                           'unreadablePagesNote', 'createdAt', 'updatedAt'
+                         ]) &&
+                         isValidStudyMaterial(incoming(), userId);
+
+        allow update: if isOwner(userId) &&
+                         isValidId(materialId) &&
+                         isValidStudyMaterial(incoming(), userId) &&
+                         incoming().userId == existing().userId &&
+                         incoming().subjectId == existing().subjectId &&
+                         incoming().createdAt == existing().createdAt &&
+                         incoming().diff(existing()).affectedKeys().hasOnly([
+                           'fileName', 'mimeType', 'category', 'fileSizeBytes', 'localUri',
+                           'processingStatus', 'statusMessage', 'sessionYearDetected',
+                           'verifiedOfficialSource', 'extractedSummary', 'extractedText',
+                           'pageCount', 'unreadablePagesNote', 'updatedAt'
+                         ]);
+
+        allow delete: if isOwner(userId) && isValidId(materialId);
+      }
+
+      // --- Chapters & Study Notes ---
+      match /chapters/{chapterId} {
+        allow get: if isOwner(userId) && isValidId(chapterId);
+        allow list: if isOwner(userId);
+
+        allow create: if isOwner(userId) &&
+                         isValidId(chapterId) &&
+                         incoming().keys().hasAll([
+                           'userId', 'subjectId', 'chapterNumber', 'title', 'urduTitle', 'pageReference',
+                           'introduction', 'urduIntroduction', 'learningObjectives', 'officialSlos',
+                           'topics', 'completeNotes', 'shortNotes', 'definitions', 'formulasAndConcepts',
+                           'solvedExamples', 'solvedExercises', 'importantQuestions', 'chapterSummary',
+                           'sourceBasis', 'completed', 'masteryPercent', 'lastQuizScorePercent',
+                           'createdAt', 'updatedAt'
+                         ]) &&
+                         incoming().keys().hasOnly([
+                           'userId', 'subjectId', 'chapterNumber', 'title', 'urduTitle', 'pageReference',
+                           'introduction', 'urduIntroduction', 'learningObjectives', 'officialSlos',
+                           'topics', 'completeNotes', 'shortNotes', 'definitions', 'formulasAndConcepts',
+                           'solvedExamples', 'solvedExercises', 'importantQuestions', 'chapterSummary',
+                           'sourceBasis', 'completed', 'masteryPercent', 'lastQuizScorePercent',
+                           'createdAt', 'updatedAt'
+                         ]) &&
+                         isValidChapter(incoming(), userId);
+
+        allow update: if isOwner(userId) &&
+                         isValidId(chapterId) &&
+                         isValidChapter(incoming(), userId) &&
+                         incoming().userId == existing().userId &&
+                         incoming().subjectId == existing().subjectId &&
+                         incoming().createdAt == existing().createdAt &&
+                         incoming().diff(existing()).affectedKeys().hasOnly([
+                           'chapterNumber', 'title', 'urduTitle', 'pageReference',
+                           'introduction', 'urduIntroduction', 'learningObjectives', 'officialSlos',
+                           'topics', 'completeNotes', 'shortNotes', 'definitions', 'formulasAndConcepts',
+                           'solvedExamples', 'solvedExercises', 'importantQuestions', 'chapterSummary',
+                           'sourceBasis', 'completed', 'masteryPercent', 'lastQuizScorePercent',
+                           'updatedAt'
+                         ]);
+
+        allow delete: if isOwner(userId) && isValidId(chapterId);
+      }
+
+      // --- Chapter MCQ Banks & Exam Papers ---
+      match /mcqBanks/{bankId} {
+        allow get: if isOwner(userId) && isValidId(bankId);
+        allow list: if isOwner(userId);
+
+        allow create: if isOwner(userId) &&
+                         isValidId(bankId) &&
+                         incoming().keys().hasAll([
+                           'userId', 'subjectId', 'chapterId', 'chapterTitle', 'questions',
+                           'shortTestQuestions', 'longTestQuestions', 'answerKeySummary',
+                           'createdAt', 'updatedAt'
+                         ]) &&
+                         incoming().keys().hasOnly([
+                           'userId', 'subjectId', 'chapterId', 'chapterTitle', 'questions',
+                           'shortTestQuestions', 'longTestQuestions', 'answerKeySummary',
+                           'createdAt', 'updatedAt'
+                         ]) &&
+                         isValidMcqBank(incoming(), userId);
+
+        allow update: if isOwner(userId) &&
+                         isValidId(bankId) &&
+                         isValidMcqBank(incoming(), userId) &&
+                         incoming().userId == existing().userId &&
+                         incoming().subjectId == existing().subjectId &&
+                         incoming().chapterId == existing().chapterId &&
+                         incoming().createdAt == existing().createdAt &&
+                         incoming().diff(existing()).affectedKeys().hasOnly([
+                           'chapterTitle', 'questions', 'shortTestQuestions',
+                           'longTestQuestions', 'answerKeySummary', 'updatedAt'
+                         ]);
+
+        allow delete: if isOwner(userId) && isValidId(bankId);
+      }
+
+      // --- Student Quiz & Exam Attempts ---
+      match /testAttempts/{attemptId} {
+        allow get: if isOwner(userId) && isValidId(attemptId);
+        allow list: if isOwner(userId);
+
+        allow create: if isOwner(userId) &&
+                         isValidId(attemptId) &&
+                         incoming().keys().hasAll([
+                           'userId', 'subjectId', 'subjectName', 'chapterId', 'chapterTitle',
+                           'totalQuestions', 'correctAnswers', 'percentage', 'weakTopics',
+                           'durationSeconds', 'createdAt'
+                         ]) &&
+                         incoming().keys().hasOnly([
+                           'userId', 'subjectId', 'subjectName', 'chapterId', 'chapterTitle',
+                           'totalQuestions', 'correctAnswers', 'percentage', 'weakTopics',
+                           'durationSeconds', 'createdAt'
+                         ]) &&
+                         isValidTestAttempt(incoming(), userId);
+
+        allow update: if false;
+        allow delete: if isOwner(userId) && isValidId(attemptId);
+      }
+
+      // --- Subject-Isolated AI Tutor Messages ---
+      match /tutorMessages/{messageId} {
+        allow get: if isOwner(userId) && isValidId(messageId);
+        allow list: if isOwner(userId);
+
+        allow create: if isOwner(userId) &&
+                         isValidId(messageId) &&
+                         incoming().keys().hasAll([
+                           'userId', 'subjectId', 'chapterId', 'role', 'content',
+                           'urduContent', 'sourceNote', 'createdAt'
+                         ]) &&
+                         incoming().keys().hasOnly([
+                           'userId', 'subjectId', 'chapterId', 'role', 'content',
+                           'urduContent', 'sourceNote', 'createdAt'
+                         ]) &&
+                         isValidTutorMessage(incoming(), userId);
+
+        allow update: if false;
+        allow delete: if isOwner(userId) && isValidId(messageId);
+      }
+    }
+  }
+}

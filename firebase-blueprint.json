@@ -1,0 +1,233 @@
+{
+  "entities": {
+    "StudentProfile": {
+      "title": "StudentProfile",
+      "description": "Personal FBISE Class 9 student profile and parent administration preferences for the 2027-2028 session.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string", "description": "Firebase Auth UID of the authorized parent/student account." },
+        "studentName": { "type": "string", "description": "Student display name." },
+        "className": { "type": "string", "description": "Academic class (Class 9)." },
+        "board": { "type": "string", "description": "Education board (FBISE Pakistan)." },
+        "session": { "type": "string", "description": "Target examination session (2027-2028)." },
+        "parentModeEnabled": { "type": "boolean", "description": "Whether Parent Admin controls are active." },
+        "urduSupportEnabled": { "type": "boolean", "description": "Whether bilingual English + Urdu RTL explanations are enabled." },
+        "lastStudiedSubjectId": { "type": "string", "description": "ID of the last studied subject for resume capability." },
+        "lastStudiedChapterId": { "type": "string", "description": "ID of the last studied chapter for resume capability." },
+        "lastStudiedTopicTitle": { "type": "string", "description": "Title of the last studied topic or chapter." },
+        "seededDefaults": { "type": "boolean", "description": "Whether initial suggested Class 9 subjects were seeded." },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Server timestamp (FieldValue.serverTimestamp())." },
+        "updatedAt": { "type": "string", "format": "date-time", "description": "Server timestamp (FieldValue.serverTimestamp())." }
+      },
+      "required": [
+        "userId", "studentName", "className", "board", "session",
+        "parentModeEnabled", "urduSupportEnabled", "lastStudiedSubjectId",
+        "lastStudiedChapterId", "lastStudiedTopicTitle", "seededDefaults",
+        "createdAt", "updatedAt"
+      ]
+    },
+    "Subject": {
+      "title": "Subject",
+      "description": "Dynamically managed Class 9 subject with separate curriculum verification, teaching strategy, and counters.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "name": { "type": "string" },
+        "code": { "type": "string" },
+        "description": { "type": "string" },
+        "iconKey": { "type": "string" },
+        "customIconUri": { "type": "string" },
+        "accentColorKey": { "type": "string" },
+        "enabled": { "type": "boolean" },
+        "languageMode": { "type": "string", "enum": ["ENGLISH_URDU", "URDU_PRIMARY", "ENGLISH_PRIMARY"] },
+        "curriculumSession": { "type": "string" },
+        "curriculumVerified": { "type": "boolean" },
+        "curriculumWarning": { "type": "string" },
+        "teachingStrategy": { "type": "string" },
+        "sortOrder": { "type": "integer" },
+        "chapterCount": { "type": "integer" },
+        "completedChapterCount": { "type": "integer" },
+        "materialCount": { "type": "integer" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Server timestamp (FieldValue.serverTimestamp())." },
+        "updatedAt": { "type": "string", "format": "date-time", "description": "Server timestamp (FieldValue.serverTimestamp())." }
+      },
+      "required": [
+        "userId", "name", "code", "description", "iconKey", "customIconUri",
+        "accentColorKey", "enabled", "languageMode", "curriculumSession",
+        "curriculumVerified", "curriculumWarning", "teachingStrategy",
+        "sortOrder", "chapterCount", "completedChapterCount", "materialCount",
+        "createdAt", "updatedAt"
+      ]
+    },
+    "StudyMaterial": {
+      "title": "StudyMaterial",
+      "description": "Uploaded textbook PDF, scanned book, DOCX, image, curriculum/SLO document, past paper, or marking scheme.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "subjectId": { "type": "string" },
+        "fileName": { "type": "string" },
+        "mimeType": { "type": "string" },
+        "category": {
+          "type": "string",
+          "enum": ["TEXTBOOK", "SCANNED_BOOK", "CURRICULUM_SLO", "MODEL_PAPER", "PAST_PAPER", "MARKING_SCHEME", "STUDY_NOTES", "WORD_DOC", "PAGE_IMAGE"]
+        },
+        "fileSizeBytes": { "type": "integer" },
+        "localUri": { "type": "string" },
+        "processingStatus": {
+          "type": "string",
+          "enum": ["UPLOADED", "PROCESSING", "PROCESSED", "PARTIAL_WARNING", "ERROR"]
+        },
+        "statusMessage": { "type": "string" },
+        "sessionYearDetected": { "type": "string" },
+        "verifiedOfficialSource": { "type": "boolean" },
+        "extractedSummary": { "type": "string" },
+        "extractedText": { "type": "string" },
+        "pageCount": { "type": "integer" },
+        "unreadablePagesNote": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Server timestamp (FieldValue.serverTimestamp())." },
+        "updatedAt": { "type": "string", "format": "date-time", "description": "Server timestamp (FieldValue.serverTimestamp())." }
+      },
+      "required": [
+        "userId", "subjectId", "fileName", "mimeType", "category", "fileSizeBytes",
+        "localUri", "processingStatus", "statusMessage", "sessionYearDetected",
+        "verifiedOfficialSource", "extractedSummary", "extractedText", "pageCount",
+        "unreadablePagesNote", "createdAt", "updatedAt"
+      ]
+    },
+    "Chapter": {
+      "title": "Chapter",
+      "description": "Structured textbook chapter with topics, official SLOs, complete notes, short notes, definitions, formulas, solved exercises, and mastery progress.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "subjectId": { "type": "string" },
+        "chapterNumber": { "type": "integer" },
+        "title": { "type": "string" },
+        "urduTitle": { "type": "string" },
+        "pageReference": { "type": "string" },
+        "introduction": { "type": "string" },
+        "urduIntroduction": { "type": "string" },
+        "learningObjectives": { "type": "array" },
+        "officialSlos": { "type": "array" },
+        "topics": { "type": "array" },
+        "completeNotes": { "type": "string" },
+        "shortNotes": { "type": "string" },
+        "definitions": { "type": "string" },
+        "formulasAndConcepts": { "type": "string" },
+        "solvedExamples": { "type": "string" },
+        "solvedExercises": { "type": "string" },
+        "importantQuestions": { "type": "string" },
+        "chapterSummary": { "type": "string" },
+        "sourceBasis": { "type": "string" },
+        "completed": { "type": "boolean" },
+        "masteryPercent": { "type": "integer" },
+        "lastQuizScorePercent": { "type": "integer" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Server timestamp (FieldValue.serverTimestamp())." },
+        "updatedAt": { "type": "string", "format": "date-time", "description": "Server timestamp (FieldValue.serverTimestamp())." }
+      },
+      "required": [
+        "userId", "subjectId", "chapterNumber", "title", "urduTitle", "pageReference",
+        "introduction", "urduIntroduction", "learningObjectives", "officialSlos",
+        "topics", "completeNotes", "shortNotes", "definitions", "formulasAndConcepts",
+        "solvedExamples", "solvedExercises", "importantQuestions", "chapterSummary",
+        "sourceBasis", "completed", "masteryPercent", "lastQuizScorePercent",
+        "createdAt", "updatedAt"
+      ]
+    },
+    "McqBank": {
+      "title": "McqBank",
+      "description": "Chapter MCQ bank (30+ MCQs with explanations), chapter test short/long questions, and answer key.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "subjectId": { "type": "string" },
+        "chapterId": { "type": "string" },
+        "chapterTitle": { "type": "string" },
+        "questions": { "type": "array" },
+        "shortTestQuestions": { "type": "array" },
+        "longTestQuestions": { "type": "array" },
+        "answerKeySummary": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Server timestamp (FieldValue.serverTimestamp())." },
+        "updatedAt": { "type": "string", "format": "date-time", "description": "Server timestamp (FieldValue.serverTimestamp())." }
+      },
+      "required": [
+        "userId", "subjectId", "chapterId", "chapterTitle", "questions",
+        "shortTestQuestions", "longTestQuestions", "answerKeySummary",
+        "createdAt", "updatedAt"
+      ]
+    },
+    "TestAttempt": {
+      "title": "TestAttempt",
+      "description": "Recorded interactive MCQ test attempt with score, percentage, and identified weak topics.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "subjectId": { "type": "string" },
+        "subjectName": { "type": "string" },
+        "chapterId": { "type": "string" },
+        "chapterTitle": { "type": "string" },
+        "totalQuestions": { "type": "integer" },
+        "correctAnswers": { "type": "integer" },
+        "percentage": { "type": "integer" },
+        "weakTopics": { "type": "array" },
+        "durationSeconds": { "type": "integer" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Server timestamp (FieldValue.serverTimestamp())." }
+      },
+      "required": [
+        "userId", "subjectId", "subjectName", "chapterId", "chapterTitle",
+        "totalQuestions", "correctAnswers", "percentage", "weakTopics",
+        "durationSeconds", "createdAt"
+      ]
+    },
+    "TutorMessage": {
+      "title": "TutorMessage",
+      "description": "Subject-isolated AI Personal Tutor message with optional Urdu translation and source reference.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "subjectId": { "type": "string" },
+        "chapterId": { "type": "string" },
+        "role": { "type": "string", "enum": ["USER", "TUTOR"] },
+        "content": { "type": "string" },
+        "urduContent": { "type": "string" },
+        "sourceNote": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Server timestamp (FieldValue.serverTimestamp())." }
+      },
+      "required": [
+        "userId", "subjectId", "chapterId", "role", "content",
+        "urduContent", "sourceNote", "createdAt"
+      ]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": { "$ref": "#/entities/StudentProfile" },
+      "description": "Authorized student/parent account profile and study resume state."
+    },
+    "/users/{userId}/subjects/{subjectId}": {
+      "schema": { "$ref": "#/entities/Subject" },
+      "description": "Dynamic Class 9 subjects managed by the parent administrator."
+    },
+    "/users/{userId}/materials/{materialId}": {
+      "schema": { "$ref": "#/entities/StudyMaterial" },
+      "description": "Uploaded educational materials associated with each subject."
+    },
+    "/users/{userId}/chapters/{chapterId}": {
+      "schema": { "$ref": "#/entities/Chapter" },
+      "description": "Subject chapters containing SLOs, notes, solved exercises, and mastery progress."
+    },
+    "/users/{userId}/mcqBanks/{bankId}": {
+      "schema": { "$ref": "#/entities/McqBank" },
+      "description": "Chapter MCQ banks, chapter test questions, and answer keys."
+    },
+    "/users/{userId}/testAttempts/{attemptId}": {
+      "schema": { "$ref": "#/entities/TestAttempt" },
+      "description": "Interactive chapter quiz/test attempt records and weak topics."
+    },
+    "/users/{userId}/tutorMessages/{messageId}": {
+      "schema": { "$ref": "#/entities/TutorMessage" },
+      "description": "Subject-isolated Gemini AI Tutor chat history."
+    }
+  }
+}
