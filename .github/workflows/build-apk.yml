@@ -31,12 +31,23 @@ jobs:
         with:
           gradle-version: "9.3.1"
 
-      - name: Restore debug keystore
+      - name: Prepare debug keystore
         run: |
           if [ -f debug.keystore.base64 ] && [ ! -f debug.keystore ]; then
             base64 -d debug.keystore.base64 > debug.keystore
+          elif [ ! -f debug.keystore ]; then
+            keytool -genkeypair -v \
+              -keystore debug.keystore \
+              -storepass android \
+              -alias androiddebugkey \
+              -keypass android \
+              -keyalg RSA \
+              -keysize 2048 \
+              -validity 10000 \
+              -dname "CN=Android Debug,O=Android,C=US"
           fi
           ls -lh debug.keystore
+          test -f app/google-services.json && echo "google-services.json found" || echo "Warning: app/google-services.json not found in repo"
 
       - name: Build Debug APK
         run: gradle :app:assembleDebug --no-daemon --stacktrace
