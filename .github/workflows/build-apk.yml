@@ -47,10 +47,15 @@ jobs:
               -dname "CN=Android Debug,O=Android,C=US"
           fi
           ls -lh debug.keystore
-          test -f app/google-services.json && echo "google-services.json found" || echo "Warning: app/google-services.json not found in repo"
+          if [ ! -f app/google-services.json ]; then
+            echo "::error::app/google-services.json is missing from the GitHub repository!"
+            exit 1
+          fi
 
       - name: Build Debug APK
-        run: gradle :app:assembleDebug --no-daemon --stacktrace
+        env:
+          GRADLE_OPTS: "-Xmx4g -XX:MaxMetaspaceSize=1g"
+        run: gradle :app:assembleDebug --console=plain
 
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
