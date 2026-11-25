@@ -8,6 +8,8 @@ import androidx.credentials.CredentialManager
 import androidx.credentials.CustomCredential
 import androidx.credentials.GetCredentialRequest
 import androidx.credentials.exceptions.GetCredentialCancellationException
+import androidx.credentials.exceptions.GetCredentialProviderConfigurationException
+import androidx.credentials.exceptions.GetCredentialUnsupportedException
 import com.example.R
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption
 import com.google.android.libraries.identity.googleid.GetSignInWithGoogleOption
@@ -15,8 +17,10 @@ import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential.Companion.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseAuthException
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
+import com.google.firebase.auth.OAuthProvider
 import com.google.firebase.auth.auth
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.NonCancellable
@@ -48,22 +52,34 @@ fun attemptAutoSignIn(
         onAuthSuccess()
         return
     }
-    val clientId = try {
-        context.getString(R.string.default_web_client_id)
-    } catch (_: Exception) {
-        onUnauthenticated()
-        return
-    }
-    val googleIdOption = GetGoogleIdOption.Builder()
-        .setFilterByAuthorizedAccounts(true)
-        .setServerClientId(clientId)
-        .setAutoSelectEnabled(true)
-        .build()
-    val request = GetCredentialRequest.Builder()
-        .addCredentialOption(googleIdOption)
-        .build()
-
     scope.launch {
+        try {
+            val pending = Firebase.auth.pendingAuthResult
+            if (pending != null) {
+                pending.await()
+                if (Firebase.auth.currentUser != null) {
+                    onAuthSuccess()
+                    return@launch
+                }
+            }
+        } catch (_: Exception) {
+            // Ignore stale pending OAuth result and proceed with normal startup check.
+        }
+        val clientId = try {
+            context.getString(R.string.default_web_client_id)
+        } catch (_: Exception) {
+            onUnauthenticated()
+            return@launch
+        }
+        val googleIdOption = GetGoogleIdOption.Builder()
+            .setFilterByAuthorizedAccounts(true)
+            .setServerClientId(clientId)
+            .setAutoSelectEnabled(true)
+            .build()
+        val request = GetCredentialRequest.Builder()
+            .addCredentialOption(googleIdOption)
+            .build()
+
         try {
             val activityContext = context as? Activity ?: run {
                 onUnauthenticated()
@@ -105,9 +121,12 @@ fun onGoogleSignInClicked(
         .build()
 
     scope.launch {
+        val activityContext = context as? Activity
+        if (activityContext == null) {
+            onAuthError("Google Sign-In requires an Activity context.")
+            return@launch
+        }
         try {
-            val activityContext = context as? Activity
-                ?: throw IllegalStateException("Google Sign-In requires an Activity context.")
             val cred = credentialManager.getCredential(activityContext, request).credential
             if (cred is CustomCredential && cred.type == TYPE_GOOGLE_ID_TOKEN_CREDENTIAL) {
                 val token = GoogleIdTokenCredential.createFrom(cred.data).idToken
@@ -121,10 +140,40 @@ fun onGoogleSignInClicked(
         } catch (e: GetCredentialCancellationException) {
             Log.w(AUTH_TAG, "Google Sign-In flow cancelled or dismissed: ${e.message}", e)
             onAuthCancelled()
+        } catch (e: GetCredentialProviderConfigurationException) {
+            Log.w(AUTH_TAG, "Credential Manager provider unavailable; trying browser Google OAuth", e)
+            signInWithGoogleWebFallback(activityContext, onAuthSuccess, onAuthError, onAuthCancelled)
+        } catch (e: GetCredentialUnsupportedException) {
+            Log.w(AUTH_TAG, "Credential Manager unsupported on device; trying browser Google OAuth", e)
+            signInWithGoogleWebFallback(activityContext, onAuthSuccess, onAuthError, onAuthCancelled)
         } catch (e: Exception) {
             Log.e(AUTH_TAG, "Google Sign-In failed", e)
             onAuthError(e.localizedMessage ?: "Sign in failed")
         }
+    }
+}
+
+private suspend fun signInWithGoogleWebFallback(
+    activity: Activity,
+    onAuthSuccess: () -> Unit,
+    onAuthError: (String) -> Unit,
+    onAuthCancelled: () -> Unit
+) {
+    try {
+        val provider = OAuthProvider.newBuilder("google.com").build()
+        Firebase.auth.startActivityForSignInWithProvider(activity, provider).await()
+        onAuthSuccess()
+    } catch (e: FirebaseAuthException) {
+        if (e.errorCode == "ERROR_WEB_CONTEXT_CANCELED") {
+            Log.w(AUTH_TAG, "Browser Google Sign-In cancelled: ${e.message}", e)
+            onAuthCancelled()
+        } else {
+            Log.e(AUTH_TAG, "Browser Google Sign-In failed (${e.errorCode})", e)
+            onAuthError(e.localizedMessage ?: "Google Sign-In requires Google Play Services or a browser.")
+        }
+    } catch (e: Exception) {
+        Log.e(AUTH_TAG, "Browser Google Sign-In failed", e)
+        onAuthError(e.localizedMessage ?: "Google Sign-In failed on this device.")
     }
 }
 
