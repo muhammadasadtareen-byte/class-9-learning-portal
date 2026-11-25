@@ -69,9 +69,9 @@ import com.example.data.repository.PortalRepository
 import com.example.ui.components.shareOrOpenFile
 import com.example.ui.screens.AuthScreen
 import com.example.ui.screens.ChapterDetailScreen
-import com.example.ui.screens.HomeSubjectsScreen
 import com.example.ui.screens.ParentAdminScreen
 import com.example.ui.screens.ProgressDashboardScreen
+import com.example.ui.screens.SubjectListScreen
 import com.example.ui.screens.SubjectWorkspaceScreen
 import com.example.ui.theme.Class9PortalTheme
 import com.example.ui.viewmodel.AiTaskState
@@ -461,7 +461,7 @@ private fun AuthenticatedPortalApp(
 
                             else -> {
                                 when (currentTopDest) {
-                                    TopDestination.SUBJECTS -> HomeSubjectsScreen(
+                                    TopDestination.SUBJECTS -> SubjectListScreen(
                                         profile = profile,
                                         subjects = subjects,
                                         allChapters = allChapters,
