@@ -20,10 +20,12 @@ import com.example.data.model.TutorRole
 import com.example.data.seed.ChemistrySeedModels
 import com.example.data.seed.SeedChapterSpec
 import com.example.data.seed.SeedMcqBankSpec
+import com.example.data.seed.SubjectSeedLoader
 import com.google.firebase.Firebase
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
+import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
@@ -41,12 +43,14 @@ import org.json.JSONObject
 
 class PortalRepository(
     private val db: FirebaseFirestore,
-    private val auth: FirebaseAuth = Firebase.auth
+    private val auth: FirebaseAuth = Firebase.auth,
+    private val context: Context? = null
 ) {
     constructor(context: Context) : this(
-        FirebaseFirestore.getInstance(
+        db = FirebaseFirestore.getInstance(
             context.applicationContext.getString(R.string.firestore_database_id)
-        )
+        ),
+        context = context.applicationContext
     )
 
     private fun requireUserId(expectedUserId: String? = null): String {
@@ -247,7 +251,7 @@ class PortalRepository(
                 }
             }
 
-            seedChemistryIfNeeded(uid)
+            seedAndSyncSubjectsIfNeeded(uid)
             Result.success(Unit)
         } catch (e: CancellationException) {
             throw e
@@ -257,127 +261,146 @@ class PortalRepository(
         }
     }
 
-    private suspend fun seedChemistryIfNeeded(uid: String) {
-        val chemSubjectRef = subjectsCol(uid).document(ChemistrySeedModels.CHEM_SUBJECT_ID)
-        val chemSubjectSnap = chemSubjectRef.get().await()
-        if (!chemSubjectSnap.exists()) return
+    private data class BatchWriteOp(
+        val ref: DocumentReference,
+        val data: Map<String, Any>,
+        val isUpdate: Boolean
+    )
 
-        syncUpdatedSeededChaptersIfNeeded(uid)
-
-        val hasChapters = !chaptersCol(uid)
-            .whereEqualTo("subjectId", ChemistrySeedModels.CHEM_SUBJECT_ID)
-            .limit(1)
-            .get()
-            .await()
-            .isEmpty
-        val hasMaterials = !materialsCol(uid)
-            .whereEqualTo("subjectId", ChemistrySeedModels.CHEM_SUBJECT_ID)
-            .limit(1)
-            .get()
-            .await()
-            .isEmpty
-        if (hasChapters || hasMaterials) return
-
-        val batch = db.batch()
-        val now = FieldValue.serverTimestamp()
-        val subjectId = ChemistrySeedModels.CHEM_SUBJECT_ID
-
-        ChemistrySeedModels.materials.forEach { mat ->
-            val matPayload = mapOf(
-                "userId" to uid,
-                "subjectId" to subjectId,
-                "fileName" to mat.fileName.trim().ifBlank { "Untitled_Document" }.take(200),
-                "mimeType" to mat.mimeType.trim().ifBlank { "application/pdf" }.take(120),
-                "category" to mat.category.name,
-                "fileSizeBytes" to mat.fileSizeBytes.coerceIn(0L, 524288000L),
-                "localUri" to mat.localUri.take(600),
-                "processingStatus" to mat.processingStatus.name,
-                "statusMessage" to mat.statusMessage.take(500),
-                "sessionYearDetected" to mat.sessionYearDetected.take(60),
-                "verifiedOfficialSource" to mat.verifiedOfficialSource,
-                "extractedSummary" to mat.extractedSummary.take(20000),
-                "extractedText" to mat.extractedText.take(120000),
-                "pageCount" to mat.pageCount.coerceIn(0, 2000),
-                "unreadablePagesNote" to mat.unreadablePagesNote.take(500),
-                "createdAt" to now,
-                "updatedAt" to now
-            )
-            batch.set(materialsCol(uid).document(mat.id), matPayload)
-        }
-
-        ChemistrySeedModels.chapters.forEach { ch ->
-            val chapterPayload = chapterContentUpdateMap(ch, now) + mapOf(
-                "userId" to uid,
-                "subjectId" to subjectId,
-                "completed" to false,
-                "masteryPercent" to 0,
-                "lastQuizScorePercent" to 0,
-                "createdAt" to now
-            )
-            batch.set(chaptersCol(uid).document(ch.id), chapterPayload)
-        }
-
-        ChemistrySeedModels.mcqBanks.forEach { bank ->
-            val bankPayload = mcqBankContentUpdateMap(bank, now) + mapOf(
-                "userId" to uid,
-                "subjectId" to subjectId,
-                "chapterId" to bank.chapterId,
-                "createdAt" to now
-            )
-            batch.set(mcqBanksCol(uid).document(bank.bankId), bankPayload)
-        }
-
-        batch.update(
-            chemSubjectRef,
-            mapOf(
-                "curriculumSession" to ChemistrySeedModels.CHEM_CURRICULUM_SESSION.take(60),
-                "curriculumVerified" to false,
-                "curriculumWarning" to ChemistrySeedModels.CHEM_CURRICULUM_WARNING.take(500),
-                "teachingStrategy" to ChemistrySeedModels.CHEM_TEACHING_STRATEGY.take(2000),
-                "chapterCount" to ChemistrySeedModels.chapters.size.coerceIn(0, 200),
-                "completedChapterCount" to 0,
-                "materialCount" to ChemistrySeedModels.materials.size.coerceIn(0, 500),
-                "updatedAt" to now
-            )
-        )
-
-        batch.commit().await()
-    }
-
-    private suspend fun syncUpdatedSeededChaptersIfNeeded(uid: String) {
-        val ch6Ref = chaptersCol(uid).document("ch_chem_06")
-        val ch6Snap = ch6Ref.get().await()
-        if (!ch6Snap.exists()) return
-
-        val existingSourceBasis = ch6Snap.getString("sourceBasis").orEmpty()
-        if (existingSourceBasis.contains("[SLO-AF v2]")) return
-
-        val ch6Spec = ChemistrySeedModels.chapters.firstOrNull { it.id == "ch_chem_06" } ?: return
-        val bank6Spec = ChemistrySeedModels.mcqBanks.firstOrNull { it.bankId == "bank_ch_chem_06" }
+    private suspend fun seedAndSyncSubjectsIfNeeded(uid: String) {
+        val bundles = SubjectSeedLoader.loadAll(context)
         val now = FieldValue.serverTimestamp()
 
-        val batch = db.batch()
-        batch.update(ch6Ref, chapterContentUpdateMap(ch6Spec, now))
+        for (bundle in bundles) {
+            val subjectRef = subjectsCol(uid).document(bundle.subjectId)
+            val subjectSnap = subjectRef.get().await()
+            if (!subjectSnap.exists()) continue
 
-        if (bank6Spec != null) {
-            val bank6Ref = mcqBanksCol(uid).document(bank6Spec.bankId)
-            val bank6Snap = bank6Ref.get().await()
-            if (bank6Snap.exists()) {
-                batch.update(bank6Ref, mcqBankContentUpdateMap(bank6Spec, now))
-            } else {
-                batch.set(
-                    bank6Ref,
-                    mcqBankContentUpdateMap(bank6Spec, now) + mapOf(
+            val existingChaptersSnap = chaptersCol(uid)
+                .whereEqualTo("subjectId", bundle.subjectId)
+                .get()
+                .await()
+            val existingChaptersById = existingChaptersSnap.documents.associateBy { it.id }
+
+            val existingMaterialsSnap = materialsCol(uid)
+                .whereEqualTo("subjectId", bundle.subjectId)
+                .get()
+                .await()
+            val existingMaterialIds = existingMaterialsSnap.documents.map { it.id }.toSet()
+
+            val existingBanksSnap = mcqBanksCol(uid)
+                .whereEqualTo("subjectId", bundle.subjectId)
+                .get()
+                .await()
+            val existingBankIds = existingBanksSnap.documents.map { it.id }.toSet()
+
+            val ops = mutableListOf<BatchWriteOp>()
+            val touchedChapterIds = mutableSetOf<String>()
+
+            bundle.materials.forEach { mat ->
+                if (mat.id !in existingMaterialIds) {
+                    val matPayload = mapOf(
                         "userId" to uid,
-                        "subjectId" to ChemistrySeedModels.CHEM_SUBJECT_ID,
-                        "chapterId" to bank6Spec.chapterId,
+                        "subjectId" to bundle.subjectId,
+                        "fileName" to mat.fileName.trim().ifBlank { "Untitled_Document" }.take(200),
+                        "mimeType" to mat.mimeType.trim().ifBlank { "application/pdf" }.take(120),
+                        "category" to mat.category.name,
+                        "fileSizeBytes" to mat.fileSizeBytes.coerceIn(0L, 524288000L),
+                        "localUri" to mat.localUri.take(600),
+                        "processingStatus" to mat.processingStatus.name,
+                        "statusMessage" to mat.statusMessage.take(500),
+                        "sessionYearDetected" to mat.sessionYearDetected.take(60),
+                        "verifiedOfficialSource" to mat.verifiedOfficialSource,
+                        "extractedSummary" to mat.extractedSummary.take(20000),
+                        "extractedText" to mat.extractedText.take(120000),
+                        "pageCount" to mat.pageCount.coerceIn(0, 2000),
+                        "unreadablePagesNote" to mat.unreadablePagesNote.take(500),
+                        "createdAt" to now,
+                        "updatedAt" to now
+                    )
+                    ops.add(BatchWriteOp(materialsCol(uid).document(mat.id), matPayload, isUpdate = false))
+                }
+            }
+
+            bundle.chapters.forEach { ch ->
+                val existingDoc = existingChaptersById[ch.id]
+                if (existingDoc == null) {
+                    val chapterPayload = chapterContentUpdateMap(ch, now) + mapOf(
+                        "userId" to uid,
+                        "subjectId" to bundle.subjectId,
+                        "completed" to false,
+                        "masteryPercent" to 0,
+                        "lastQuizScorePercent" to 0,
                         "createdAt" to now
                     )
+                    ops.add(BatchWriteOp(chaptersCol(uid).document(ch.id), chapterPayload, isUpdate = false))
+                    touchedChapterIds.add(ch.id)
+                } else {
+                    val existingSource = existingDoc.getString("sourceBasis").orEmpty()
+                    if (!existingSource.contains(SubjectSeedLoader.SEED_VERSION_TAG)) {
+                        ops.add(BatchWriteOp(existingDoc.reference, chapterContentUpdateMap(ch, now), isUpdate = true))
+                        touchedChapterIds.add(ch.id)
+                    }
+                }
+            }
+
+            bundle.mcqBanks.forEach { bank ->
+                val bankExists = bank.bankId in existingBankIds
+                if (!bankExists || bank.chapterId in touchedChapterIds) {
+                    if (bankExists) {
+                        ops.add(BatchWriteOp(mcqBanksCol(uid).document(bank.bankId), mcqBankContentUpdateMap(bank, now), isUpdate = true))
+                    } else {
+                        val bankPayload = mcqBankContentUpdateMap(bank, now) + mapOf(
+                            "userId" to uid,
+                            "subjectId" to bundle.subjectId,
+                            "chapterId" to bank.chapterId,
+                            "createdAt" to now
+                        )
+                        ops.add(BatchWriteOp(mcqBanksCol(uid).document(bank.bankId), bankPayload, isUpdate = false))
+                    }
+                }
+            }
+
+            ops.chunked(12).forEach { chunk ->
+                val batch = db.batch()
+                chunk.forEach { op ->
+                    if (op.isUpdate) {
+                        batch.update(op.ref, op.data)
+                    } else {
+                        batch.set(op.ref, op.data)
+                    }
+                }
+                batch.commit().await()
+            }
+
+            val expectedChapterCount = (existingChaptersById.keys + bundle.chapters.map { it.id }).size.coerceIn(0, 200)
+            val expectedCompletedCount = existingChaptersSnap.documents.count { it.getBoolean("completed") == true }.coerceIn(0, 200)
+            val expectedMaterialCount = (existingMaterialIds + bundle.materials.map { it.id }).size.coerceIn(0, 500)
+            val expectedSession = bundle.curriculumSession.take(60)
+            val needsSubjectMetaUpdate = ops.isNotEmpty() ||
+                subjectSnap.getString("curriculumSession") != expectedSession ||
+                (subjectSnap.getLong("chapterCount")?.toInt() ?: 0) != expectedChapterCount ||
+                (subjectSnap.getLong("materialCount")?.toInt() ?: 0) != expectedMaterialCount
+
+            if (needsSubjectMetaUpdate) {
+                val template = DefaultFbiseSubjects.suggestedSubjects
+                    .firstOrNull { "sub_${it.idSuffix}" == bundle.subjectId }
+                val subjectUpdates = mutableMapOf<String, Any>(
+                    "curriculumSession" to expectedSession,
+                    "curriculumWarning" to bundle.curriculumWarning.take(500),
+                    "teachingStrategy" to bundle.teachingStrategy.take(2000),
+                    "chapterCount" to expectedChapterCount,
+                    "completedChapterCount" to expectedCompletedCount,
+                    "materialCount" to expectedMaterialCount,
+                    "updatedAt" to now
                 )
+                if (template != null) {
+                    subjectUpdates["description"] = template.description.take(400)
+                    subjectUpdates["accentColorKey"] = template.accentColorKey.take(30)
+                }
+                subjectRef.update(subjectUpdates).await()
             }
         }
-
-        batch.commit().await()
     }
 
     private fun chapterContentUpdateMap(ch: SeedChapterSpec, now: FieldValue): Map<String, Any> = mapOf(

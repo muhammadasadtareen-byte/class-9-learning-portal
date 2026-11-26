@@ -37,6 +37,7 @@ import androidx.compose.material.icons.filled.Description
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.PictureAsPdf
 import androidx.compose.material.icons.filled.RadioButtonUnchecked
+import androidx.compose.material.icons.filled.SwapHoriz
 import androidx.compose.material.icons.filled.WarningAmber
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -57,6 +58,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -117,7 +119,9 @@ fun SubjectWorkspaceScreen(
     onSubmitQuizAttempt: (Chapter, Int, Int, List<String>, Int) -> Unit,
     onSendTutorQuestion: (Chapter?, String) -> Unit,
     onClearTutorChat: () -> Unit,
-    onExportPdf: (Chapter, McqBank?, PdfExportType) -> Unit
+    onExportPdf: (Chapter, McqBank?, PdfExportType) -> Unit,
+    otherScienceSubject: Subject? = null,
+    onSwitchSubject: (() -> Unit)? = null
 ) {
     BackHandler(onBack = onBack)
 
@@ -168,6 +172,35 @@ fun SubjectWorkspaceScreen(
             navigationIcon = {
                 IconButton(onClick = onBack, modifier = Modifier.testTag("workspace_back_button")) {
                     Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back to subjects")
+                }
+            },
+            actions = {
+                if (otherScienceSubject != null && onSwitchSubject != null) {
+                    val switchAccent = SubjectAccents.colorFor(otherScienceSubject.accentColorKey)
+                    OutlinedButton(
+                        onClick = onSwitchSubject,
+                        shape = RoundedCornerShape(999.dp),
+                        border = BorderStroke(1.dp, switchAccent.copy(alpha = 0.45f)),
+                        contentPadding = PaddingValues(horizontal = 12.dp, vertical = 6.dp),
+                        modifier = Modifier
+                            .padding(end = 8.dp)
+                            .minimumInteractiveComponentSize()
+                            .testTag("switch_science_subject_button")
+                    ) {
+                        Icon(
+                            imageVector = Icons.Filled.SwapHoriz,
+                            contentDescription = "Switch to ${otherScienceSubject.name}",
+                            tint = switchAccent,
+                            modifier = Modifier.size(16.dp)
+                        )
+                        Spacer(Modifier.width(4.dp))
+                        Text(
+                            text = otherScienceSubject.name,
+                            style = MaterialTheme.typography.labelMedium,
+                            color = switchAccent,
+                            maxLines = 1
+                        )
+                    }
                 }
             },
             colors = TopAppBarDefaults.topAppBarColors(

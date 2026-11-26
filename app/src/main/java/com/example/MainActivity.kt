@@ -66,6 +66,7 @@ import com.example.core.configureAppCheck
 import com.example.core.signOutUser
 import com.example.data.ai.GeminiAcademicService
 import com.example.data.repository.PortalRepository
+import com.example.data.seed.SubjectSeedLoader
 import com.example.ui.components.shareOrOpenFile
 import com.example.ui.screens.AuthScreen
 import com.example.ui.screens.ChapterDetailScreen
@@ -146,7 +147,7 @@ private fun AuthenticatedPortalApp(
                 val databaseId = app.getString(R.string.firestore_database_id)
                 val db = FirebaseFirestore.getInstance(databaseId)
                 PortalViewModel(
-                    repository = PortalRepository(db),
+                    repository = PortalRepository(db, context = app.applicationContext),
                     aiService = GeminiAcademicService(),
                     currentUserId = currentUserId,
                     defaultDisplayName = userDisplayName
@@ -381,82 +382,100 @@ private fun AuthenticatedPortalApp(
                                 val subjectChapters = allChapters.filter { it.subjectId == activeSubject.id }
                                 val subjectMaterials = allMaterials.filter { it.subjectId == activeSubject.id }
                                 val subjectBanks = allMcqBanks.filter { it.subjectId == activeSubject.id }
-
-                                SubjectWorkspaceScreen(
-                                    subject = activeSubject,
-                                    chapters = subjectChapters,
-                                    materials = subjectMaterials,
-                                    mcqBanks = subjectBanks,
-                                    tutorMessages = tutorMessages,
-                                    parentMode = profile?.parentModeEnabled ?: true,
-                                    urduEnabled = profile?.urduSupportEnabled ?: true,
-                                    aiTaskState = aiTaskState,
-                                    onBack = { activeSubjectId = null },
-                                    onOpenChapter = { ch ->
-                                        activeChapterId = ch.id
-                                        viewModel.recordResumePoint(activeSubject.id, ch.id, "${activeSubject.name} · Ch ${ch.chapterNumber}: ${ch.title}")
-                                    },
-                                    onUploadMaterial = { uri, category ->
-                                        viewModel.uploadAndAnalyzeMaterial(
-                                            context = context,
-                                            subject = activeSubject,
-                                            uri = uri,
-                                            selectedCategory = category,
-                                            existingChapters = subjectChapters
-                                        )
-                                    },
-                                    onDeleteMaterial = { mat ->
-                                        viewModel.deleteMaterial(activeSubject.id, mat.id, mat.fileName)
-                                    },
-                                    onAddChapter = { num, title, urdu, pageRef, topicsRaw, slosRaw ->
-                                        viewModel.addChapterManually(activeSubject.id, num, title, urdu, pageRef, topicsRaw, slosRaw)
-                                    },
-                                    onEditChapterMetadata = { chId, num, title, urdu, pageRef, topicsRaw, slosRaw ->
-                                        viewModel.editChapterMetadata(chId, num, title, urdu, pageRef, topicsRaw, slosRaw)
-                                    },
-                                    onToggleChapterCompleted = { ch, done ->
-                                        viewModel.toggleChapterCompleted(activeSubject.id, ch, done)
-                                    },
-                                    onDeleteChapter = { ch ->
-                                        viewModel.deleteChapter(activeSubject.id, ch.id, ch.title)
-                                    },
-                                    onGenerateMcqBank = { ch ->
-                                        viewModel.generateMcqBank(activeSubject, ch, subjectMaterials)
-                                    },
-                                    onSubmitQuizAttempt = { ch, total, correct, weak, sec ->
-                                        viewModel.submitQuizAttempt(activeSubject, ch, total, correct, weak, sec)
-                                    },
-                                    onSendTutorQuestion = { ch, question ->
-                                        viewModel.askSubjectTutor(
-                                            subject = activeSubject,
-                                            chapter = ch,
-                                            subjectMaterials = subjectMaterials,
-                                            history = tutorMessages,
-                                            question = question,
-                                            urduEnabled = profile?.urduSupportEnabled ?: true
-                                        )
-                                    },
-                                    onClearTutorChat = {
-                                        viewModel.clearSubjectTutorChat(activeSubject.id)
-                                    },
-                                    onExportPdf = { ch, bank, exportType ->
-                                        viewModel.exportChapterPdf(
-                                            context = context,
-                                            subject = activeSubject,
-                                            chapter = ch,
-                                            mcqBank = bank,
-                                            exportType = exportType,
-                                            onReady = { result ->
-                                                shareOrOpenFile(
-                                                    context = context,
-                                                    uri = result.contentUri,
-                                                    mimeType = "application/pdf",
-                                                    chooserTitle = "Open or Save ${result.exportType.title}"
-                                                )
-                                            }
-                                        )
+                                val otherScienceSubject = remember(subjects, activeSubject.id) {
+                                    when (activeSubject.id) {
+                                        SubjectSeedLoader.CHEM_SUBJECT_ID ->
+                                            subjects.firstOrNull { it.id == SubjectSeedLoader.PHY_SUBJECT_ID && it.enabled }
+                                        SubjectSeedLoader.PHY_SUBJECT_ID ->
+                                            subjects.firstOrNull { it.id == SubjectSeedLoader.CHEM_SUBJECT_ID && it.enabled }
+                                        else -> null
                                     }
-                                )
+                                }
+
+                                key(activeSubject.id) {
+                                    SubjectWorkspaceScreen(
+                                        subject = activeSubject,
+                                        chapters = subjectChapters,
+                                        materials = subjectMaterials,
+                                        mcqBanks = subjectBanks,
+                                        tutorMessages = tutorMessages,
+                                        parentMode = profile?.parentModeEnabled ?: true,
+                                        urduEnabled = profile?.urduSupportEnabled ?: true,
+                                        aiTaskState = aiTaskState,
+                                        onBack = { activeSubjectId = null },
+                                        onOpenChapter = { ch ->
+                                            activeChapterId = ch.id
+                                            viewModel.recordResumePoint(activeSubject.id, ch.id, "${activeSubject.name} · Ch ${ch.chapterNumber}: ${ch.title}")
+                                        },
+                                        onUploadMaterial = { uri, category ->
+                                            viewModel.uploadAndAnalyzeMaterial(
+                                                context = context,
+                                                subject = activeSubject,
+                                                uri = uri,
+                                                selectedCategory = category,
+                                                existingChapters = subjectChapters
+                                            )
+                                        },
+                                        onDeleteMaterial = { mat ->
+                                            viewModel.deleteMaterial(activeSubject.id, mat.id, mat.fileName)
+                                        },
+                                        onAddChapter = { num, title, urdu, pageRef, topicsRaw, slosRaw ->
+                                            viewModel.addChapterManually(activeSubject.id, num, title, urdu, pageRef, topicsRaw, slosRaw)
+                                        },
+                                        onEditChapterMetadata = { chId, num, title, urdu, pageRef, topicsRaw, slosRaw ->
+                                            viewModel.editChapterMetadata(chId, num, title, urdu, pageRef, topicsRaw, slosRaw)
+                                        },
+                                        onToggleChapterCompleted = { ch, done ->
+                                            viewModel.toggleChapterCompleted(activeSubject.id, ch, done)
+                                        },
+                                        onDeleteChapter = { ch ->
+                                            viewModel.deleteChapter(activeSubject.id, ch.id, ch.title)
+                                        },
+                                        onGenerateMcqBank = { ch ->
+                                            viewModel.generateMcqBank(activeSubject, ch, subjectMaterials)
+                                        },
+                                        onSubmitQuizAttempt = { ch, total, correct, weak, sec ->
+                                            viewModel.submitQuizAttempt(activeSubject, ch, total, correct, weak, sec)
+                                        },
+                                        onSendTutorQuestion = { ch, question ->
+                                            viewModel.askSubjectTutor(
+                                                subject = activeSubject,
+                                                chapter = ch,
+                                                subjectMaterials = subjectMaterials,
+                                                history = tutorMessages,
+                                                question = question,
+                                                urduEnabled = profile?.urduSupportEnabled ?: true
+                                            )
+                                        },
+                                        onClearTutorChat = {
+                                            viewModel.clearSubjectTutorChat(activeSubject.id)
+                                        },
+                                        onExportPdf = { ch, bank, exportType ->
+                                            viewModel.exportChapterPdf(
+                                                context = context,
+                                                subject = activeSubject,
+                                                chapter = ch,
+                                                mcqBank = bank,
+                                                exportType = exportType,
+                                                onReady = { result ->
+                                                    shareOrOpenFile(
+                                                        context = context,
+                                                        uri = result.contentUri,
+                                                        mimeType = "application/pdf",
+                                                        chooserTitle = "Open or Save ${result.exportType.title}"
+                                                    )
+                                                }
+                                            )
+                                        },
+                                        otherScienceSubject = otherScienceSubject,
+                                        onSwitchSubject = otherScienceSubject?.let { target ->
+                                            {
+                                                activeSubjectId = target.id
+                                                activeChapterId = null
+                                            }
+                                        }
+                                    )
+                                }
                             }
 
                             else -> {

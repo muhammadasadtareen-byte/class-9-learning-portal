@@ -76,6 +76,7 @@ import com.example.data.model.DefaultFbiseSubjects
 import com.example.data.model.LanguageMode
 import com.example.data.model.StudentProfile
 import com.example.data.model.Subject
+import com.example.data.seed.SubjectSeedLoader
 import com.example.ui.components.SubjectBadgeIcon
 import com.example.ui.components.SubjectEditorDialog
 import com.example.ui.theme.SubjectAccents
@@ -332,6 +333,24 @@ fun SubjectListScreen(
                 }
             }
 
+            // Featured Class 9 Science Tutors (Chemistry & Physics SLO Sections)
+            val chemistrySubject = effectiveSubjects.firstOrNull {
+                it.id == SubjectSeedLoader.CHEM_SUBJECT_ID && (it.enabled || parentMode)
+            }
+            val physicsSubject = effectiveSubjects.firstOrNull {
+                it.id == SubjectSeedLoader.PHY_SUBJECT_ID && (it.enabled || parentMode)
+            }
+            if (chemistrySubject != null || physicsSubject != null) {
+                item(span = { GridItemSpan(columns) }) {
+                    ScienceTutorQuickSection(
+                        chemistrySubject = chemistrySubject,
+                        physicsSubject = physicsSubject,
+                        allChapters = allChapters,
+                        onOpenSubject = onOpenSubject
+                    )
+                }
+            }
+
             // Search + Add Subject Controls
             item(span = { GridItemSpan(columns) }) {
                 Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
@@ -509,6 +528,127 @@ private fun DashboardMetricChip(
                 style = MaterialTheme.typography.labelSmall,
                 color = contentColor.copy(alpha = 0.85f),
                 maxLines = 1
+            )
+        }
+    }
+}
+
+@Composable
+private fun ScienceTutorQuickSection(
+    chemistrySubject: Subject?,
+    physicsSubject: Subject?,
+    allChapters: List<Chapter>,
+    onOpenSubject: (Subject) -> Unit
+) {
+    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = "Science Tutors · FBISE SLO Archive",
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold
+            )
+            Text(
+                text = "Chemistry & Physics",
+                style = MaterialTheme.typography.labelMedium,
+                color = MaterialTheme.colorScheme.primary
+            )
+        }
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(10.dp)
+        ) {
+            chemistrySubject?.let { chem ->
+                val chemChapters = allChapters.filter { it.subjectId == chem.id }
+                val chemSloCount = chemChapters.sumOf { it.officialSlos.size }
+                ScienceTutorTabCard(
+                    subject = chem,
+                    chapterCount = maxOf(chem.chapterCount, chemChapters.size),
+                    sloCount = if (chemSloCount > 0) chemSloCount else 199,
+                    tag = "science_tab_chemistry",
+                    onClick = { onOpenSubject(chem) },
+                    modifier = Modifier.weight(1f)
+                )
+            }
+            physicsSubject?.let { phy ->
+                val phyChapters = allChapters.filter { it.subjectId == phy.id }
+                val phySloCount = phyChapters.sumOf { it.officialSlos.size }
+                ScienceTutorTabCard(
+                    subject = phy,
+                    chapterCount = maxOf(phy.chapterCount, phyChapters.size),
+                    sloCount = if (phySloCount > 0) phySloCount else 141,
+                    tag = "science_tab_physics",
+                    onClick = { onOpenSubject(phy) },
+                    modifier = Modifier.weight(1f)
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun ScienceTutorTabCard(
+    subject: Subject,
+    chapterCount: Int,
+    sloCount: Int,
+    tag: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val accent = SubjectAccents.colorFor(subject.accentColorKey)
+    Card(
+        shape = RoundedCornerShape(18.dp),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLowest),
+        border = BorderStroke(1.2.dp, accent.copy(alpha = 0.35f)),
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+        modifier = modifier
+            .minimumInteractiveComponentSize()
+            .clickable(onClick = onClick)
+            .testTag(tag)
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(10.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(
+                    Brush.horizontalGradient(
+                        colors = listOf(accent.copy(alpha = 0.12f), Color.Transparent)
+                    )
+                )
+                .padding(horizontal = 12.dp, vertical = 12.dp)
+        ) {
+            SubjectBadgeIcon(
+                iconKey = subject.iconKey,
+                customIconUri = subject.customIconUri,
+                accentColorKey = subject.accentColorKey,
+                contentDescription = subject.name,
+                size = 38.dp
+            )
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = subject.name,
+                    style = MaterialTheme.typography.titleSmall,
+                    fontWeight = FontWeight.Bold,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+                Text(
+                    text = "$chapterCount Ch · $sloCount SLOs",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = accent,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+            }
+            Icon(
+                imageVector = Icons.AutoMirrored.Filled.ArrowForward,
+                contentDescription = "Open ${subject.name}",
+                tint = accent,
+                modifier = Modifier.size(16.dp)
             )
         }
     }
