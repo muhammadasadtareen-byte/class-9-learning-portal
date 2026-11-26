@@ -18,6 +18,8 @@ import com.example.data.model.TestAttempt
 import com.example.data.model.TutorMessage
 import com.example.data.model.TutorRole
 import com.example.data.seed.ChemistrySeedModels
+import com.example.data.seed.SeedChapterSpec
+import com.example.data.seed.SeedMcqBankSpec
 import com.google.firebase.Firebase
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
@@ -260,6 +262,8 @@ class PortalRepository(
         val chemSubjectSnap = chemSubjectRef.get().await()
         if (!chemSubjectSnap.exists()) return
 
+        syncUpdatedSeededChaptersIfNeeded(uid)
+
         val hasChapters = !chaptersCol(uid)
             .whereEqualTo("subjectId", ChemistrySeedModels.CHEM_SUBJECT_ID)
             .limit(1)
@@ -302,56 +306,23 @@ class PortalRepository(
         }
 
         ChemistrySeedModels.chapters.forEach { ch ->
-            val chapterPayload = mapOf(
+            val chapterPayload = chapterContentUpdateMap(ch, now) + mapOf(
                 "userId" to uid,
                 "subjectId" to subjectId,
-                "chapterNumber" to ch.chapterNumber.coerceIn(1, 100),
-                "title" to ch.title.trim().take(160),
-                "urduTitle" to ch.urduTitle.trim().take(160),
-                "pageReference" to ch.pageReference.trim().take(80),
-                "introduction" to ch.introduction.trim().take(3000),
-                "urduIntroduction" to ch.urduIntroduction.trim().take(3000),
-                "learningObjectives" to ch.learningObjectives.map { it.trim() }.filter { it.isNotEmpty() }.take(30),
-                "officialSlos" to ch.officialSlos.map { it.trim() }.filter { it.isNotEmpty() }.take(40),
-                "topics" to ch.topics.map { it.trim() }.filter { it.isNotEmpty() }.take(40),
-                "completeNotes" to ch.completeNotes.take(40000),
-                "shortNotes" to ch.shortNotes.take(20000),
-                "definitions" to ch.definitions.take(20000),
-                "formulasAndConcepts" to ch.formulasAndConcepts.take(20000),
-                "solvedExamples" to ch.solvedExamples.take(20000),
-                "solvedExercises" to ch.solvedExercises.take(40000),
-                "importantQuestions" to ch.importantQuestions.take(25000),
-                "chapterSummary" to ch.chapterSummary.take(10000),
-                "sourceBasis" to ch.sourceBasis.trim().take(300),
                 "completed" to false,
                 "masteryPercent" to 0,
                 "lastQuizScorePercent" to 0,
-                "createdAt" to now,
-                "updatedAt" to now
+                "createdAt" to now
             )
             batch.set(chaptersCol(uid).document(ch.id), chapterPayload)
         }
 
         ChemistrySeedModels.mcqBanks.forEach { bank ->
-            val questionMaps = bank.questions.take(60).map { question ->
-                val padded = if (question.options.size == 4) {
-                    question
-                } else {
-                    question.copy(options = (question.options + listOf("", "", "", "")).take(4))
-                }
-                padded.toMap()
-            }
-            val bankPayload = mapOf(
+            val bankPayload = mcqBankContentUpdateMap(bank, now) + mapOf(
                 "userId" to uid,
                 "subjectId" to subjectId,
                 "chapterId" to bank.chapterId,
-                "chapterTitle" to bank.chapterTitle.trim().take(160),
-                "questions" to questionMaps,
-                "shortTestQuestions" to bank.shortTestQuestions.take(25),
-                "longTestQuestions" to bank.longTestQuestions.take(15),
-                "answerKeySummary" to bank.answerKeySummary.take(30000),
-                "createdAt" to now,
-                "updatedAt" to now
+                "createdAt" to now
             )
             batch.set(mcqBanksCol(uid).document(bank.bankId), bankPayload)
         }
@@ -371,6 +342,83 @@ class PortalRepository(
         )
 
         batch.commit().await()
+    }
+
+    private suspend fun syncUpdatedSeededChaptersIfNeeded(uid: String) {
+        val ch6Ref = chaptersCol(uid).document("ch_chem_06")
+        val ch6Snap = ch6Ref.get().await()
+        if (!ch6Snap.exists()) return
+
+        val existingSourceBasis = ch6Snap.getString("sourceBasis").orEmpty()
+        if (existingSourceBasis.contains("[SLO-AF v2]")) return
+
+        val ch6Spec = ChemistrySeedModels.chapters.firstOrNull { it.id == "ch_chem_06" } ?: return
+        val bank6Spec = ChemistrySeedModels.mcqBanks.firstOrNull { it.bankId == "bank_ch_chem_06" }
+        val now = FieldValue.serverTimestamp()
+
+        val batch = db.batch()
+        batch.update(ch6Ref, chapterContentUpdateMap(ch6Spec, now))
+
+        if (bank6Spec != null) {
+            val bank6Ref = mcqBanksCol(uid).document(bank6Spec.bankId)
+            val bank6Snap = bank6Ref.get().await()
+            if (bank6Snap.exists()) {
+                batch.update(bank6Ref, mcqBankContentUpdateMap(bank6Spec, now))
+            } else {
+                batch.set(
+                    bank6Ref,
+                    mcqBankContentUpdateMap(bank6Spec, now) + mapOf(
+                        "userId" to uid,
+                        "subjectId" to ChemistrySeedModels.CHEM_SUBJECT_ID,
+                        "chapterId" to bank6Spec.chapterId,
+                        "createdAt" to now
+                    )
+                )
+            }
+        }
+
+        batch.commit().await()
+    }
+
+    private fun chapterContentUpdateMap(ch: SeedChapterSpec, now: FieldValue): Map<String, Any> = mapOf(
+        "chapterNumber" to ch.chapterNumber.coerceIn(1, 100),
+        "title" to ch.title.trim().take(160),
+        "urduTitle" to ch.urduTitle.trim().take(160),
+        "pageReference" to ch.pageReference.trim().take(80),
+        "introduction" to ch.introduction.trim().take(3000),
+        "urduIntroduction" to ch.urduIntroduction.trim().take(3000),
+        "learningObjectives" to ch.learningObjectives.map { it.trim() }.filter { it.isNotEmpty() }.take(30),
+        "officialSlos" to ch.officialSlos.map { it.trim() }.filter { it.isNotEmpty() }.take(40),
+        "topics" to ch.topics.map { it.trim() }.filter { it.isNotEmpty() }.take(40),
+        "completeNotes" to ch.completeNotes.take(40000),
+        "shortNotes" to ch.shortNotes.take(20000),
+        "definitions" to ch.definitions.take(20000),
+        "formulasAndConcepts" to ch.formulasAndConcepts.take(20000),
+        "solvedExamples" to ch.solvedExamples.take(20000),
+        "solvedExercises" to ch.solvedExercises.take(40000),
+        "importantQuestions" to ch.importantQuestions.take(25000),
+        "chapterSummary" to ch.chapterSummary.take(10000),
+        "sourceBasis" to ch.sourceBasis.trim().take(300),
+        "updatedAt" to now
+    )
+
+    private fun mcqBankContentUpdateMap(bank: SeedMcqBankSpec, now: FieldValue): Map<String, Any> {
+        val questionMaps = bank.questions.take(60).map { question ->
+            val padded = if (question.options.size == 4) {
+                question
+            } else {
+                question.copy(options = (question.options + listOf("", "", "", "")).take(4))
+            }
+            padded.toMap()
+        }
+        return mapOf(
+            "chapterTitle" to bank.chapterTitle.trim().take(160),
+            "questions" to questionMaps,
+            "shortTestQuestions" to bank.shortTestQuestions.take(25),
+            "longTestQuestions" to bank.longTestQuestions.take(15),
+            "answerKeySummary" to bank.answerKeySummary.take(30000),
+            "updatedAt" to now
+        )
     }
 
     suspend fun updateProfileSettings(

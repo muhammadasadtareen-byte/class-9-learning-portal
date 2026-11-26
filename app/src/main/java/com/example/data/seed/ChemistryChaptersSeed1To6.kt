@@ -628,133 +628,362 @@ Atoms attain stable octets/duplets via ionic electron transfer, covalent sharing
             chapterNumber = 6,
             title = "Stoichiometry",
             urduTitle = "اسٹائکیومیٹری",
-            pageReference = "NBF Grade 9 Textbook pp. 96–113",
-            introduction = "Stoichiometry is the quantitative heart of chemistry. You will master chemical formulas (empirical vs molecular, binary ionic formula writing & naming), molecular and formula masses, Avogadro's number (6.022 × 10²³) and the mole concept, gram atomic/molecular/formula masses, mole–mass–particle conversions (Examples 6.3–6.10), balancing equations, ionic equations with spectator ions, and molecular vs structural formulas.",
-            urduIntroduction = "اسٹائکیومیٹری کیمیا میں مقداری حساب کتاب کی بنیاد ہے۔ اس باب میں ایمپیریکل اور مالیکیولر فارمولے، آئونک مرکبات کی نامزدگی، مالیکیولر اور فارمولا ماس، ایووگیڈرو نمبر (6.022 × 10²³) اور مول کا تصور، مول-ماس-ذرات کے عددی سوالات، کیمیائی مساواتوں کا توازن اور آئونک مساواتیں شامل ہیں۔",
+            pageReference = "NBF Grade 9 Textbook pp. 96–113 · FBISE AF (12 Periods)",
+            introduction = "Stoichiometry (NBF Ch 6, pp. 96–113) is the quantitative core of FBISE Class 9 Chemistry under Domain B (12 periods, 10 Summative SLOs: C-09-B-42 to C-09-B-51). Unlike rote chapters, 5 of its 10 SLOs are tested at the Application [A] cognitive level (4 Knowledge [K], 1 Understanding [U], 5 Application [A]). These notes organize every concept strictly by official FBISE SLO, cognitive level, marking-scheme rubrics, and Textbook/Model Paper worked problems.",
+            urduIntroduction = "اسٹائکیومیٹری (NBF باب 6، صفحات 96–113) فیڈرل بورڈ کے SLO نصاب کا اہم مقداری باب ہے جس کے تمام 10 SLOs (C-09-B-42 تا C-09-B-51) سالانہ امتحان (Summative) میں شامل ہیں۔ اس باب میں 5 SLOs اطلاقی (Application) نوعیت کے ہیں، اس لیے عددی سوالات، فارمولے اخذ کرنا، اور متوازن و آئونک مساواتیں امتحان کے لیے انتہائی اہم ہیں۔",
             learningObjectives = listOf(
-                "Distinguish empirical and molecular formulas and write formulas/names of binary ionic compounds.",
-                "Calculate molecular mass (Mr) and formula mass in amu.",
-                "Define the mole and Avogadro's constant (6.022 × 10²³) and interconvert mass, moles, and particles.",
-                "Balance chemical equations and write net ionic equations by cancelling spectator ions.",
-                "Write molecular, condensed, and structural formulas for simple covalent compounds."
+                "[K] State formulas of common elements & compounds and define Molecular vs Empirical formula (C-09-B-42..44).",
+                "[A] Deduce binary ionic formulas & names from ion charges and molecular formulas from given structures (C-09-B-45..46).",
+                "[K/U] Define the Mole and Avogadro's constant (6.02 × 10²³ / 6.022 × 10²³) and explain their relationship (C-09-B-48..49).",
+                "[A] Apply n = m/M and N = n × Nₐ to interconvert mass, moles, molar mass, relative mass, and particles including atoms in polyatomic molecules (C-09-B-47).",
+                "[A] Construct balanced chemical and net ionic equations with state symbols (s), (l), (g), (aq) from reaction information (C-09-B-50..51)."
             ),
             officialSlos = listOf(
-                "C-09-B-42..44: Distinguish empirical vs molecular formula; write binary ionic formulas/names; compute molecular and formula masses.",
-                "C-09-B-45..47: Define mole, Avogadro's number (6.022×10²³), GAM, GMM, GFM; calculate moles, mass, and particles.",
-                "C-09-B-48..51: Balance chemical equations by inspection; write net ionic equations (spectator ions); relate molecular and structural formulas."
+                "C-09-B-42 [Knowledge | Summative]: State the formulae of common elements and compounds.",
+                "C-09-B-43 [Knowledge | Summative]: Define molecular formula of a compound as the number and type of different atoms in one molecule.",
+                "C-09-B-44 [Knowledge | Summative]: Define empirical formula of a compound as the simplest whole number ratio of different atoms in a molecule.",
+                "C-09-B-45 [Application | Summative]: Deduce the formula and name of a binary ionic compound from ions given relevant information.",
+                "C-09-B-46 [Application | Summative]: Deduce the formula of a molecular substance from the given structure of molecules.",
+                "C-09-B-47 [Application | Summative]: Use the relationship Amount of substance = mass / molar mass to calculate number of moles, mass, molar mass, relative mass (atomic/molecular/formula) and number of particles.",
+                "C-09-B-48 [Knowledge | Summative]: Define mole as amount of substance containing Avogadro's number (6.02 × 10²³) of particles (Textbook uses 6.022 × 10²³).",
+                "C-09-B-49 [Understanding | Summative]: Explain the relationship between a mole and Avogadro's constant.",
+                "C-09-B-50 [Application | Summative]: Construct chemical equations and ionic equations to show reactants forming products, including state symbols (s), (l), (g), (aq).",
+                "C-09-B-51 [Application | Summative]: Deduce the symbol equation with state symbols for a chemical reaction given relevant information."
             ),
             topics = listOf(
-                "6.1 Empirical Formula vs Molecular Formula (Table 6.1)",
-                "6.2 Molecular Mass & Formula Mass (Examples 6.1–6.2)",
-                "6.3 Binary Ionic Compound Formulas & Naming",
-                "6.4 Mole & Avogadro's Number (6.022 × 10²³), GAM/GMM/GFM",
-                "6.5 Mole–Mass–Particle Numericals (Examples 6.3–6.10)",
-                "6.6 Balancing Equations, Ionic Equations & Structural Formulas"
+                "FBISE Assessment Blueprint, ToS & Cognitive Split (K / U / A)",
+                "SLO C-09-B-42: Formulae of Common Elements & Compounds",
+                "SLO C-09-B-43 & 44: Molecular vs Empirical Formula (NBF Table 6.1)",
+                "SLO C-09-B-45: Binary Ionic Formulas & Naming (Criss-Cross Method)",
+                "SLO C-09-B-46: Deducing Molecular Formula from Structural Diagrams",
+                "SLO C-09-B-48 & 49: Mole Concept & Relationship with Avogadro's Constant",
+                "SLO C-09-B-47: Relative Masses (Mr, Formula Mass) & Mole–Mass–Particle Numericals",
+                "SLO C-09-B-50 & 51: Chemical Equations, State Symbols & Net Ionic Equations"
             ),
             completeNotes = """
-6.1 EMPIRICAL VS MOLECULAR FORMULA (pp. 96–98, Table 6.1)
-• Empirical Formula (EF): Simplest whole-number ratio of atoms in a compound.
-• Molecular Formula (MF): Actual number of atoms of each element in one molecule: MF = n × EF.
-  - Hydrogen peroxide: MF = H₂O₂, EF = HO (n=2).
-  - Glucose: MF = C₆H₁₂O₆, EF = CH₂O (n=6).
-  - Benzene: MF = C₆H₆, EF = CH (n=6).
-  - Water H₂O, Methane CH₄, Ammonia NH₃, Aspirin C₉H₈O₄: MF = EF (n=1).
-  - Ionic compounds (NaCl, CaCl₂) ONLY have empirical/formula units, not discrete molecules!
+═══ FBISE ASSESSMENT BLUEPRINT & TABLE OF SPECIFICATIONS (CH 6) ═══
+• Curriculum Domain: Domain B (Physical Chemistry) | Time Allocation: 12 Periods.
+• Assessment Scope: All 10 SLOs (C-09-B-42 to C-09-B-51) are SUMMATIVE (tested in Annual Board Exam).
+• Cognitive Level Distribution in Ch 6:
+  - Knowledge [K] (4 SLOs): C-09-B-42, 43, 44, 48 → Definitions, standard formulas, value of Nₐ.
+  - Understanding [U] (1 SLO): C-09-B-49 → Explaining why 1 mole of different substances has equal particle count but different mass.
+  - Application [A] (5 SLOs): C-09-B-45, 46, 47, 50, 51 → Deducing ionic/molecular formulas, solving multi-step mole numericals, balancing & constructing net ionic equations with state symbols.
+• Exam Weightage (Official FBISE AF & Model Paper SSC-I):
+  - Theory ToS overall: ~30% K, ~50% U, ~20% A (±5%). Ch 6 supplies high-value Application marks (~3.7% / 4 marks in Model Paper: Q1(vii) 1-mark MCQ + Q2(ix) 3-mark numerical SRQ; typically 3–7 marks across MCQs, SRQs, and LRQ parts in Annual papers).
+• Examiner Tip: For [A] numericals, FBISE marks steps individually (Formula = 0.5–1 mark, Substitution/Molar Mass = 0.5–1 mark, Final Answer with SI unit = 0.5–1 mark). Never skip units or diatomic atom multipliers (e.g., N₂ has 2 atoms/molecule)!
 
-6.2 MOLECULAR MASS & FORMULA MASS (pp. 98–99)
-• Molecular Mass = sum of atomic masses of all atoms in one covalent molecule (e.g., H₂O = 2(1)+16 = 18 amu; H₂SO₄ = 2(1)+32+4(16) = 98 amu).
-• Formula Mass = sum of atomic masses of all ions in one formula unit of an ionic compound (e.g., NaCl = 23+35.5 = 58.5 amu; CaCO₃ = 40+12+48 = 100 amu).
+══════════════════════════════════════════════════════════════════
+1. SLO C-09-B-42 [Knowledge]: FORMULAE OF COMMON ELEMENTS & COMPOUNDS
+══════════════════════════════════════════════════════════════════
+• Diatomic Elements (exist naturally as X₂ molecules — critical for mole/equation problems!):
+  H₂ (hydrogen), N₂ (nitrogen), O₂ (oxygen), F₂ (fluorine), Cl₂ (chlorine), Br₂ (bromine liquid), I₂ (iodine solid).
+• Polyatomic / Monoatomic Elements: Ozone = O₃; Phosphorus = P₄; Sulphur = S₈; Noble gases (He, Ne, Ar) & Metals (Na, Mg, Al, Fe, Cu, Zn) are written as single atom symbols.
+• Common Compounds (memorize for SLO C-09-B-42 & equation writing):
+  - Acids: HCl (hydrochloric), H₂SO₄ (sulphuric), HNO₃ (nitric), CH₃COOH (acetic/ethanoic), H₂CO₃ (carbonic).
+  - Bases/Alkalis: NaOH (caustic soda), KOH, Ca(OH)₂ (limewater), NH₃ / NH₄OH.
+  - Oxides & Hydrides: H₂O, H₂O₂ (hydrogen peroxide), CO, CO₂, SO₂, SO₃, NO₂, CaO (quicklime), MgO, Al₂O₃, NH₃, CH₄ (methane).
+  - Common Salts: NaCl, KCl, MgCl₂, CaCl₂, CaCO₃ (limestone), Na₂CO₃, NaHCO₃ (baking soda), MgSO₄, K₂SO₄, AgNO₃, BaSO₄.
+  - Organic Fuel/Food Molecules: C₆H₁₂O₆ (glucose), C₁₂H₂₂O₁₁ (sucrose), C₂H₅OH (ethanol), C₆H₆ (benzene).
 
-6.3 BINARY IONIC FORMULAS & NAMING (pp. 99–101)
-• Criss-cross valencies to neutralize charge: Mg²⁺ & Cl⁻ → MgCl₂; Al³⁺ & O²⁻ → Al₂O₃; Ca²⁺ & O²⁻ → CaO (simplify 2:2 to 1:1).
-• Naming: Cation first + Anion stem + '-ide' (e.g., MgCl₂ = Magnesium chloride; Al₂S₃ = Aluminium sulphide).
+══════════════════════════════════════════════════════════════════
+2. SLO C-09-B-43 & C-09-B-44 [Knowledge]: MOLECULAR vs EMPIRICAL FORMULA
+══════════════════════════════════════════════════════════════════
+• Molecular Formula (MF — SLO C-09-B-43): Shows the exact/actual number and type of different atoms present in ONE molecule of a covalent compound.
+• Empirical Formula (EF — SLO C-09-B-44): Shows the simplest whole-number ratio of different atoms present in a compound.
+• Mathematical Link: Molecular Formula = n × (Empirical Formula), where integer n = (Molar Mass) / (Empirical Formula Mass).
+• NBF Textbook Table 6.1 Comparison:
+  - Hydrogen peroxide: MF = H₂O₂ | Ratio H:O = 2:2 → EF = HO (n = 2).
+  - Benzene: MF = C₆H₆ | Ratio C:H = 6:6 → EF = CH (n = 6).
+  - Glucose: MF = C₆H₁₂O₆ | Ratio C:H:O = 6:12:6 → EF = CH₂O (n = 6).
+  - Ethene: MF = C₂H₄ | Ratio 2:4 → EF = CH₂ (n = 2).
+  - Water (H₂O), Ammonia (NH₃), Methane (CH₄), Aspirin (C₉H₈O₄): Ratios cannot be simplified further → MF = EF (n = 1).
+• Crucial Board Distinction: Ionic compounds (e.g., NaCl, MgCl₂, CaCO₃) form giant 3D crystal lattices, NOT discrete molecules. Therefore, their chemical formula is always an Empirical Formula (Formula Unit).
 
-6.4 MOLE & AVOGADRO'S NUMBER (pp. 101–107)
-• Avogadro's Number (Nₐ) = 6.022 × 10²³ particles/mol.
-• Mole (mol): Amount of substance containing 6.022 × 10²³ elementary entities (atoms, molecules, or formula units).
-• Molar Mass (M, g/mol): Mass of 1 mole (GAM for atoms, GMM for molecules, GFM for ionic formula units).
+══════════════════════════════════════════════════════════════════
+3. SLO C-09-B-45 [Application]: BINARY IONIC FORMULAS & NAMING
+══════════════════════════════════════════════════════════════════
+• A binary ionic compound consists of TWO elements: a metal cation (+ve) and a non-metal anion (−ve).
+• Step-by-Step Deduction Rule (Criss-Cross / Charge Neutrality):
+  1. Write cation symbol (with + charge) first, anion symbol (with − charge) second.
+  2. Cross the magnitude of charges as subscripts (Total +ve charge must equal Total −ve charge).
+  3. Divide subscripts by their highest common factor (HCF) to get the simplest whole-number ratio. Omit subscript "1".
+• Examples:
+  - Sodium chloride: Na⁺ + Cl⁻ → NaCl
+  - Magnesium chloride: Mg²⁺ + Cl⁻ → MgCl₂
+  - Magnesium oxide: Mg²⁺ + O²⁻ → Mg₂O₂ → simplify 2:2 to 1:1 → MgO
+  - Aluminium oxide: Al³⁺ + O²⁻ → Al₂O₃
+  - Magnesium nitride: Mg²⁺ + N³⁻ → Mg₃N₂
+  - Calcium sulphide: Ca²⁺ + S²⁻ → CaS
+• Naming Rule (SLO C-09-B-45):
+  [Full Name of Metal Cation] + [Non-metal Root + "-ide"]
+  Common Anion Names: F⁻ fluoride, Cl⁻ chloride, Br⁻ bromide, I⁻ iodide, O²⁻ oxide, S²⁻ sulphide, N³⁻ nitride, P³⁻ phosphide, H⁻ hydride.
+  (Urdu: دھات کا پورا نام پہلے اور غیر دھات کے نام کے آخر میں '-ide' لگایا جاتا ہے۔)
 
-6.5 BALANCING & IONIC EQUATIONS (pp. 108–111)
-• Conservation of Mass: Total atoms of each element must be equal on both sides (adjust coefficients, NEVER subscripts!). Example: CH₄ + 2O₂ → CO₂ + 2H₂O.
-• Ionic Equation: Split strong aqueous electrolytes into ions, then cancel identical SPECTATOR IONS on both sides:
-  - Neutralization: H⁺(aq) + Cl⁻(aq) + Na⁺(aq) + OH⁻(aq) → Na⁺(aq) + Cl⁻(aq) + H₂O(l) ⇒ Net ionic: H⁺(aq) + OH⁻(aq) → H₂O(l).
-  - Example 6.12: Mg(s) + H₂SO₄(aq) → MgSO₄(aq) + H₂(g) ⇒ Net ionic: Mg(s) + 2H⁺(aq) → Mg²⁺(aq) + H₂(g) (SO₄²⁻ is spectator).
+══════════════════════════════════════════════════════════════════
+4. SLO C-09-B-46 [Application]: DEDUCING FORMULA FROM MOLECULAR STRUCTURE
+══════════════════════════════════════════════════════════════════
+• In FBISE exams, you may be given a ball-and-stick diagram, structural formula (lines showing covalent bonds), or displayed structure and asked to deduce its Molecular Formula (and sometimes Empirical Formula).
+• Method (NBF p. 111):
+  1. Count every atom of each element shown in ONE molecule (do NOT miss terminal H atoms or lone substituents).
+  2. Order elements using standard convention: Carbon first, Hydrogen second, then alphabetical (O, N, halogens, S). For inorganic molecules, less electronegative atom comes first (e.g., NH₃, PCl₃, SF₆).
+• Examples:
+  - Ethane structure (H₃C–CH₃): 2 C, 6 H → MF = C₂H₆ (EF = CH₃).
+  - Ethanol structure (H₃C–CH₂–OH): 2 C, 6 H, 1 O → MF = C₂H₆O (Condensed: CH₃CH₂OH).
+  - Propanol (NBF Ex 6.13): H₃C–CH₂–CH₂–OH → 3 C, 8 H, 1 O → MF = C₃H₈O (Condensed: CH₃CH₂CH₂OH).
+  - Acetic acid (H₃C–C(=O)–OH): 2 C, 4 H, 2 O → MF = C₂H₄O₂ (EF = CH₂O).
+  - White phosphorus tetrahedron (4 P atoms bonded): MF = P₄.
 
-6.6 MOLECULAR VS STRUCTURAL FORMULA (p. 111)
-• Propanol (Ex 6.13): MF = C₃H₈O; Condensed = CH₃–CH₂–CH₂–OH; Structural shows every covalent bond explicitly.
+══════════════════════════════════════════════════════════════════
+5. SLO C-09-B-48 [Knowledge] & C-09-B-49 [Understanding]: MOLE & Nₐ
+══════════════════════════════════════════════════════════════════
+• Mole (SLO C-09-B-48): The SI unit of amount of substance containing Avogadro's number of elementary particles (atoms, molecules, ions, or formula units).
+  - Official AF value: 6.02 × 10²³ particles/mol | NBF Textbook value: 6.022 × 10²³ particles/mol (both accepted by FBISE; follow textbook 6.022 × 10²³ unless question specifies 6.02 × 10²³).
+• Relationship Between Mole & Avogadro's Constant (SLO C-09-B-49):
+  - Avogadro's constant (Nₐ) is the fixed proportionality factor connecting the microscopic particle count (N) to the macroscopic mole count (n): N = n × Nₐ.
+  - Just as "1 dozen = 12 items" regardless of whether you count grapes or watermelons, "1 mole = 6.022 × 10²³ particles" regardless of chemical identity.
+  - Therefore, 1 mole of H₂ (2 g), 1 mole of H₂O (18 g), and 1 mole of CO₂ (44 g) ALL contain the exact same number of molecules (6.022 × 10²³), even though their molar masses differ because each individual molecule has a different relative mass!
+  - Conversely, two substances with the SAME molar mass (like N₂O = 28+16 = 44 g/mol and CO₂ = 12+32 = 44 g/mol — Official Model Paper Q1(vii)) have the SAME mass per mole.
+
+══════════════════════════════════════════════════════════════════
+6. SLO C-09-B-47 [Application]: MOLAR MASS & MOLE–MASS–PARTICLE CALCULATIONS
+══════════════════════════════════════════════════════════════════
+• Relative Masses (in amu):
+  - Molecular Mass (Mr): Sum of relative atomic masses of all atoms in 1 covalent molecule (e.g., H₂SO₄ = 2(1) + 32 + 4(16) = 98 amu).
+  - Formula Mass: Sum of relative atomic masses of all ions in 1 ionic formula unit (e.g., CaCO₃ = 40 + 12 + 3(16) = 100 amu).
+• Gram Masses (Molar Mass M in g/mol):
+  - GAM (Gram Atomic Mass): Relative atomic mass expressed in grams (e.g., 1 mol C = 12 g).
+  - GMM (Gram Molecular Mass): Molecular mass in grams (e.g., 1 mol CO₂ = 44 g).
+  - GFM (Gram Formula Mass): Formula mass in grams (e.g., 1 mol NaCl = 58.5 g).
+• Core Conversion Triangle (Amount of substance n):
+  1. Mass ↔ Moles: n = m / M  and  m = n × M  and  M = m / n
+  2. Moles ↔ Particles (atoms, molecules, formula units): N = n × Nₐ  and  n = N / Nₐ
+  3. Direct Mass ↔ Particles: N = (m / M) × Nₐ
+  4. Atoms inside Polyatomic Molecules (HIGH-FREQUENCY BOARD TRAP):
+     Total Atoms = (Number of Molecules) × (Atoms per Molecule)
+     Example: 1 molecule of N₂ has 2 N atoms; 1 molecule of C₆H₁₂O₆ has 24 atoms; 1 formula unit of CaCl₂ has 3 ions (1 Ca²⁺ + 2 Cl⁻).
+
+══════════════════════════════════════════════════════════════════
+7. SLO C-09-B-50 & C-09-B-51 [Application]: CHEMICAL & IONIC EQUATIONS
+══════════════════════════════════════════════════════════════════
+• Standard State Symbols (MANDATORY under SLO C-09-B-50 & 51):
+  - (s) = solid or precipitate (e.g., Mg(s), AgCl(s), CaCO₃(s))
+  - (l) = pure liquid (e.g., H₂O(l), Br₂(l))
+  - (g) = gas (e.g., H₂(g), O₂(g), CO₂(g), N₂(g))
+  - (aq) = aqueous solution dissolved in water (e.g., HCl(aq), NaOH(aq), NaCl(aq))
+• Rules for Constructing & Balancing Symbol Equations (SLO C-09-B-50 & 51):
+  1. Translate word information into correct formulas (check valencies + diatomic elements H₂, N₂, O₂, F₂, Cl₂, Br₂, I₂).
+  2. Insert accurate state symbols (s), (l), (g), (aq).
+  3. Balance atoms on LHS and RHS by placing whole-number COEFFICIENTS in front of formulas — NEVER alter subscripts inside formulas!
+  4. Balance metals/non-metals first, then Hydrogen, and Oxygen last (e.g., CH₄(g) + 2O₂(g) → CO₂(g) + 2H₂O(l)).
+• Constructing Ionic & Net Ionic Equations (SLO C-09-B-50, NBF pp. 109–110):
+  1. Start with a completely balanced molecular equation with state symbols.
+  2. Split ONLY strong soluble aqueous electrolytes (strong acids, strong bases, soluble ionic salts labeled (aq)) into separated ions. Keep (s), (l), (g), and weak/insoluble substances intact!
+  3. Cancel identical SPECTATOR IONS appearing unchanged on both sides.
+  4. What remains is the Net Ionic Equation (check both atom balance and net charge balance!).
+  - Example A (Neutralization): HCl(aq) + NaOH(aq) → NaCl(aq) + H₂O(l)
+    Full Ionic: H⁺(aq) + Cl⁻(aq) + Na⁺(aq) + OH⁻(aq) → Na⁺(aq) + Cl⁻(aq) + H₂O(l)
+    Spectator ions: Na⁺(aq), Cl⁻(aq) → Net Ionic: H⁺(aq) + OH⁻(aq) → H₂O(l).
+  - Example B (Metal + Acid, NBF Ex 6.12): Mg(s) + H₂SO₄(aq) → MgSO₄(aq) + H₂(g)
+    Full Ionic: Mg(s) + 2H⁺(aq) + SO₄²⁻(aq) → Mg²⁺(aq) + SO₄²⁻(aq) + H₂(g)
+    Spectator ion: SO₄²⁻(aq) → Net Ionic: Mg(s) + 2H⁺(aq) → Mg²⁺(aq) + H₂(g).
+  - Example C (Precipitation): AgNO₃(aq) + NaCl(aq) → AgCl(s) + NaNO₃(aq)
+    Net Ionic: Ag⁺(aq) + Cl⁻(aq) → AgCl(s) (Spectators: Na⁺, NO₃⁻).
             """.trimIndent(),
             shortNotes = """
-• Molecular Formula = n × Empirical Formula (e.g., Glucose C₆H₁₂O₆ = 6 × CH₂O).
-• Nₐ = 6.022 × 10²³ particles/mol.
-• Key Formulas: n = m / M | m = n × M | N = n × Nₐ | n = N / Nₐ.
-• 1 mol H₂O = 18 g = 6.022 × 10²³ molecules.
-• Spectator ions appear unchanged on both sides of an aqueous equation and are cancelled to write the Net Ionic Equation.
+═══ FBISE QUICK REVISION CHECKLIST (BY COGNITIVE LEVEL) ═══
+
+[K] KNOWLEDGE MUST-KNOWS (Definitions & Constants):
+• Molecular Formula (MF): Actual number & type of atoms in 1 molecule (e.g., C₆H₁₂O₆).
+• Empirical Formula (EF): Simplest whole-number ratio of atoms (e.g., CH₂O); MF = n × EF.
+• Mole: Amount of substance containing Avogadro's number Nₐ = 6.022 × 10²³ (AF: 6.02 × 10²³) particles.
+• Diatomic Elements: H₂, N₂, O₂, F₂, Cl₂, Br₂, I₂ (always ×2 for atom count!).
+
+[U] UNDERSTANDING MUST-KNOWS:
+• 1 mole of ANY two substances has the SAME number of particles (Nₐ), even when molar masses differ (like 1 dozen grapes vs 1 dozen watermelons).
+• Equal moles of substances with equal molar mass (e.g., 1 mol N₂O = 44 g and 1 mol CO₂ = 44 g) have identical mass.
+• Ionic compounds (NaCl, CaCl₂) form lattices, not molecules, so they use Formula Mass & Empirical Formula.
+
+[A] APPLICATION MUST-DO CHECKLIST (Exam Traps!):
+• Binary Ionic Naming: Criss-cross charges, simplify ratio (Mg²⁺ + O²⁻ → MgO), end non-metal with "-ide".
+• Structure → Formula: Count C, then H, then O/N/Halogens carefully from bond lines.
+• Numericals: Write Given → Required → Formula → Molar Mass → Substitution → Answer + Unit.
+  - Check whether question asks for MOLECULES or ATOMS! (For N₂, atoms = 2 × molecules).
+• Equations: Balance coefficients only (never subscripts), include (s), (l), (g), (aq), and cancel spectator ions (only split (aq) strong electrolytes) for Net Ionic Equations.
             """.trimIndent(),
             definitions = """
-• Empirical Formula (سادہ ترین فارمولا): Formula showing the simplest whole-number ratio of atoms in a compound.
-• Molecular Formula (مالیکیولر فارمولا): Formula showing the actual number of atoms of each element in one molecule.
-• Mole (مول): SI unit for amount of substance containing exactly 6.022 × 10²³ particles.
-• Avogadro's Number Nₐ (ایووگیڈرو نمبر): 6.022 × 10²³ particles per mole.
-• Spectator Ions: Ions present in solution that do not participate in the actual chemical reaction and remain unchanged.
+• Stoichiometry (اسٹائکیومیٹری): The quantitative study of relationships between reactants and products in chemical formulas and balanced equations.
+• Molecular Formula (مالیکیولر فارمولا — C-09-B-43 [K]): Formula representing the exact number and type of different atoms present in one molecule of a compound.
+• Empirical Formula (ایمپیریکل / سادہ ترین فارمولا — C-09-B-44 [K]): Formula representing the simplest whole-number ratio of different atoms in a compound.
+• Binary Ionic Compound (بائنری آئونک مرکب — C-09-B-45 [A]): An ionic compound made of exactly two elements (one metal cation and one non-metal anion) held by electrostatic attraction.
+• Mole (مول — C-09-B-48 [K]): The SI unit of amount of substance containing Avogadro's number (6.022 × 10²³; AF 6.02 × 10²³) of particles.
+• Avogadro's Constant Nₐ (ایووگیڈرو نمبر — C-09-B-49 [U]): The fixed number of particles (6.022 × 10²³ mol⁻¹) present in one mole of any substance.
+• Molar Mass M (مولر ماس): Mass in grams of 1 mole of a substance (g/mol): GAM for atoms, GMM for molecules, GFM for ionic formula units.
+• Relative Molecular Mass Mr (اضافی مالیکیولر ماس): Sum of relative atomic masses of all atoms in one molecule (expressed in amu).
+• Formula Mass (فارمولا ماس): Sum of relative atomic masses of all ions in one formula unit of an ionic compound (e.g., NaCl = 58.5 amu).
+• Net Ionic Equation (خالص آئونک مساوات — C-09-B-50 [A]): Ionic equation obtained after cancelling identical spectator ions from both sides.
+• Spectator Ions (تماشائی آئنز): Ions in aqueous solution that remain chemically unchanged on both reactant and product sides.
             """.trimIndent(),
             formulasAndConcepts = """
-• Moles (n) = Mass in grams (m) / Molar Mass (M in g/mol)
-• Mass (m) = Moles (n) × Molar Mass (M)
-• Number of Particles (N) = Moles (n) × 6.022 × 10²³
-• Number of Particles (N) = (m / M) × 6.022 × 10²³
-• n = MF Molar Mass / EF Mass
+═══ CORE STOICHIOMETRY FORMULAS (SLO C-09-B-47) ═══
+1. Amount of Substance (Moles):
+   n = m / M     where n = moles (mol), m = mass (g), M = molar mass (g/mol)
+2. Mass from Moles:
+   m = n × M
+3. Molar Mass from Mass & Moles:
+   M = m / n
+4. Number of Particles (Molecules / Formula Units / Monoatomic Atoms):
+   N = n × Nₐ    (Nₐ = 6.022 × 10²³ mol⁻¹; FBISE AF also accepts 6.02 × 10²³ mol⁻¹)
+5. Moles from Number of Particles:
+   n = N / Nₐ
+6. Direct Mass ↔ Particles:
+   N = (m / M) × Nₐ     and     m = (N / Nₐ) × M
+7. Total Atoms in a Molecular Sample (e.g., N₂, CO₂, C₆H₁₂O₆):
+   N(atoms) = n × Nₐ × (number of atoms per molecule)
+8. Molecular vs Empirical Formula Multiplier:
+   n(multiplier) = Molar Mass (M) / Empirical Formula Mass
+   Molecular Formula = n × Empirical Formula
+
+═══ COMMON RELATIVE ATOMIC MASSES (For FBISE Numericals) ═══
+H = 1 | C = 12 | N = 14 | O = 16 | Na = 23 | Mg = 24 | Al = 27 | S = 32 | Cl = 35.5 | K = 39 | Ca = 40
+
+═══ STATE SYMBOLS & IONIC RULES (SLO C-09-B-50 & 51) ═══
+• (s) Solid / Precipitate   • (l) Pure Liquid   • (g) Gas   • (aq) Aqueous Solution
+• Split into ions ONLY if (aq) strong acid, strong base, or soluble salt.
+• NEVER split (s), (l), (g), or molecules like H₂O(l), CO₂(g), AgCl(s).
             """.trimIndent(),
             solvedExamples = """
-1. Textbook Example 6.4 (p. 103): Calculate mass of 2.5 moles of CO₂. (C=12, O=16)
-   Given: n = 2.5 mol, Molar mass M(CO₂) = 12 + 2(16) = 44 g/mol.
-   Required: Mass (m) of CO₂ in grams.
-   Formula: m = n × M
-   Substitution: m = 2.5 mol × 44 g/mol
-   Calculation: 2.5 × 44 = 110 g
-   Final Answer: 110 g of CO₂.
+1. [Verified Official - FBISE Final AF Model Paper Q2(ix/first) · 3 Marks (2+1) · SLO C-09-B-47 [A]]
+   Question: Calculate the number of atoms in each of the following samples:
+   (a) 3.4 moles of nitrogen gas [2 marks]   (b) 15 g of Sodium metal [1 mark]
 
-2. Textbook Example 6.8 (p. 105): Calculate number of molecules in 9.0 g of water (H₂O).
-   Given: m = 9.0 g, M(H₂O) = 2(1) + 16 = 18 g/mol, Nₐ = 6.022 × 10²³ mol⁻¹.
-   Required: Number of H₂O molecules (N).
-   Formula: n = m / M; N = n × Nₐ
-   Substitution: n = 9.0 / 18 = 0.50 mol; N = 0.50 × 6.022 × 10²³
-   Calculation: 0.50 × 6.022 × 10²³ = 3.011 × 10²³
-   Final Answer: 3.011 × 10²³ molecules of water.
+   Part (a): 3.4 moles of nitrogen gas (N₂)
+   • Given: Moles of N₂ (n) = 3.4 mol; Nₐ = 6.022 × 10²³ mol⁻¹; Atomicity of N₂ = 2 atoms/molecule.
+   • Required: Number of nitrogen atoms.
+   • Formula: Number of molecules = n × Nₐ ; Number of atoms = 2 × Number of molecules.
+   • Substitution:
+     Molecules of N₂ = 3.4 × 6.022 × 10²³ = 20.4748 × 10²³ = 2.047 × 10²⁴ molecules
+     Atoms of N = 2 × 2.04748 × 10²⁴ = 4.095 × 10²⁴ atoms (or 4.094 × 10²⁴ using 6.02 × 10²³).
+   • Final Answer: 4.095 × 10²⁴ atoms of Nitrogen.
 
-3. Textbook Example 6.10 (p. 107): Find mass of 3.011 × 10²³ atoms of Carbon (M = 12 g/mol).
-   Given: N = 3.011 × 10²³ atoms, Nₐ = 6.022 × 10²³ mol⁻¹, M(C) = 12 g/mol.
-   Required: Mass (m) of Carbon in grams.
-   Formula: n = N / Nₐ; m = n × M
-   Substitution: n = (3.011 × 10²³) / (6.022 × 10²³) = 0.5 mol; m = 0.5 × 12
-   Calculation: 0.5 × 12 = 6.0 g
-   Final Answer: 6.0 g of Carbon.
+   Part (b): 15 g of Sodium metal (Na)
+   • Given: Mass of Na (m) = 15 g; Molar mass M(Na) = 23 g/mol; Nₐ = 6.022 × 10²³ mol⁻¹.
+   • Required: Number of Na atoms.
+   • Formula: N = (m / M) × Nₐ
+   • Substitution & Calculation:
+     n = 15 / 23 = 0.652 mol
+     N = 0.652 × 6.022 × 10²³ = 3.927 × 10²³ atoms.
+   • Final Answer: 3.93 × 10²³ atoms of Sodium.
+
+2. [NBF Textbook Example 6.4 (p. 103) · SLO C-09-B-47 [A]]
+   Calculate the mass of 2.5 moles of CO₂. (C = 12, O = 16)
+   • Given: n = 2.5 mol; M(CO₂) = 12 + 2(16) = 44 g/mol.
+   • Required: Mass (m) in grams.
+   • Formula: m = n × M
+   • Substitution: m = 2.5 × 44 = 110 g.
+   • Final Answer: 110 g of CO₂.
+
+3. [NBF Textbook Example 6.8 (p. 105) · SLO C-09-B-47 [A]]
+   Calculate the number of molecules in 9.0 g of water (H₂O).
+   • Given: m = 9.0 g; M(H₂O) = 2(1) + 16 = 18 g/mol; Nₐ = 6.022 × 10²³ mol⁻¹.
+   • Required: Number of molecules (N).
+   • Formula: n = m / M ; N = n × Nₐ
+   • Substitution: n = 9.0 / 18 = 0.50 mol; N = 0.50 × 6.022 × 10²³ = 3.011 × 10²³.
+   • Final Answer: 3.011 × 10²³ molecules of H₂O.
+
+4. [NBF Textbook Example 6.10 (p. 107) · SLO C-09-B-47 [A]]
+   Find the mass of 3.011 × 10²³ atoms of Carbon (M = 12 g/mol).
+   • Given: N = 3.011 × 10²³ atoms; Nₐ = 6.022 × 10²³ mol⁻¹; M(C) = 12 g/mol.
+   • Required: Mass (m) of Carbon in grams.
+   • Formula: n = N / Nₐ ; m = n × M
+   • Substitution: n = (3.011 × 10²³) / (6.022 × 10²³) = 0.5 mol; m = 0.5 × 12 = 6.0 g.
+   • Final Answer: 6.0 g of Carbon.
+
+5. [SLO C-09-B-50 & 51 · Equation & Net Ionic Worked Problem]
+   Deduce the balanced symbol equation and net ionic equation when solid Magnesium reacts with aqueous Hydrochloric acid to produce aqueous Magnesium chloride and Hydrogen gas.
+   • Step 1 (Word → Formulas + States): Mg(s) + HCl(aq) → MgCl₂(aq) + H₂(g)
+   • Step 2 (Balance coefficients): Mg(s) + 2HCl(aq) → MgCl₂(aq) + H₂(g)
+   • Step 3 (Full Ionic Equation): Mg(s) + 2H⁺(aq) + 2Cl⁻(aq) → Mg²⁺(aq) + 2Cl⁻(aq) + H₂(g)
+   • Step 4 (Cancel Spectator Ion 2Cl⁻): Mg(s) + 2H⁺(aq) → Mg²⁺(aq) + H₂(g).
             """.trimIndent(),
             solvedExercises = """
-NBF Chapter 6 Review Questions (pp. 112–113):
-1. Write empirical formulas of C₆H₆, C₆H₁₂O₆, H₂O₂, and Na₂S₂O₃: CH, CH₂O, HO, and Na₂S₂O₃ (already simplest whole ratio).
-2. Calculate Formula Mass of K₂CO₃ (K=39, C=12, O=16):
-   Given: K=39, C=12, O=16. Required: Formula mass of K₂CO₃.
-   Formula: 2(K) + C + 3(O)
-   Calculation: 2(39) + 12 + 3(16) = 78 + 12 + 48 = 138 amu.
-   Final Answer: 138 amu.
-3. Balance and write net ionic equation for HCl(aq) + KOH(aq) → KCl(aq) + H₂O(l):
-   Already balanced; K⁺ and Cl⁻ are spectator ions → Net ionic: H⁺(aq) + OH⁻(aq) → H₂O(l).
-4. How many moles are in 49 g of H₂SO₄?
-   Given: m = 49 g, M = 98 g/mol. Formula: n = m / M = 49 / 98 = 0.5 mol.
-   Final Answer: 0.5 mol of H₂SO₄.
+═══ NBF CHAPTER 6 REVIEW QUESTIONS & SLO PRACTICE (pp. 112–113) ═══
+
+1. (SLO C-09-B-43 & 44) Write Empirical Formulas of C₆H₆, C₆H₁₂O₆, H₂O₂, and Na₂S₂O₃:
+   • C₆H₆ (divide by 6) → CH
+   • C₆H₁₂O₆ (divide by 6) → CH₂O
+   • H₂O₂ (divide by 2) → HO
+   • Na₂S₂O₃ (ratios 2:2:3 have HCF = 1) → Na₂S₂O₃ (EF = MF).
+
+2. (SLO C-09-B-45) Deduce formula and name of binary ionic compounds from:
+   (a) Al³⁺ and O²⁻ → Al₂O₃ (Aluminium oxide)
+   (b) Mg²⁺ and N³⁻ → Mg₃N₂ (Magnesium nitride)
+   (c) Ca²⁺ and S²⁻ → CaS (Calcium sulphide; 2:2 simplifies to 1:1)
+   (d) K⁺ and Br⁻ → KBr (Potassium bromide).
+
+3. (SLO C-09-B-46) Deduce molecular & empirical formulas from structural formulas:
+   (a) CH₃–CH₂–CH₂–OH (Propanol, NBF Ex 6.13) → 3 C, 8 H, 1 O → MF = C₃H₈O, EF = C₃H₈O.
+   (b) H–C≡C–H (Ethyne) → 2 C, 2 H → MF = C₂H₂, EF = CH.
+   (c) CH₃–COOH (Acetic acid) → 2 C, 4 H, 2 O → MF = C₂H₄O₂, EF = CH₂O.
+
+4. (SLO C-09-B-47) Calculate Formula Mass of K₂CO₃ (K = 39, C = 12, O = 16):
+   • Given: K = 39, C = 12, O = 16.
+   • Required: Formula mass of K₂CO₃.
+   • Formula: 2(K) + C + 3(O)
+   • Calculation: 2(39) + 12 + 3(16) = 78 + 12 + 48 = 138 amu.
+   • Final Answer: 138 amu.
+
+5. (SLO C-09-B-47) How many moles are in 49 g of H₂SO₄? (H = 1, S = 32, O = 16)
+   • Given: m = 49 g; M(H₂SO₄) = 2(1) + 32 + 4(16) = 98 g/mol.
+   • Required: Moles (n).
+   • Formula: n = m / M = 49 / 98 = 0.50 mol.
+   • Final Answer: 0.50 mol of H₂SO₄.
+
+6. (SLO C-09-B-50 & 51) Balance and write the net ionic equation for HCl(aq) + KOH(aq) → KCl(aq) + H₂O(l):
+   • Already balanced with state symbols.
+   • Full Ionic: H⁺(aq) + Cl⁻(aq) + K⁺(aq) + OH⁻(aq) → K⁺(aq) + Cl⁻(aq) + H₂O(l)
+   • Spectator ions: K⁺(aq) and Cl⁻(aq)
+   • Net Ionic Equation: H⁺(aq) + OH⁻(aq) → H₂O(l).
+
+7. (SLO C-09-B-51) Deduce symbol equation with state symbols: Solid Calcium carbonate reacts with dilute Hydrochloric acid to give aqueous Calcium chloride, liquid water, and Carbon dioxide gas.
+   • Answer: CaCO₃(s) + 2HCl(aq) → CaCl₂(aq) + H₂O(l) + CO₂(g).
             """.trimIndent(),
             importantQuestions = """
-1. [Verified Official - Final AF Model Paper] Write the net ionic equation when Mg reacts with dilute H₂SO₄ and name the spectator ion.
-2. [Verified Official - 1st Annual 2026 (1SA-I 26005)] Calculate the number of molecules and total atoms in 18 g of glucose (C₆H₁₂O₆, M = 180 g/mol).
-3. [Verified Official - 1st Annual 2025 (1SA-I 25005)] Differentiate Empirical Formula and Molecular Formula with three examples.
-4. [Verified Official - 2nd Annual 2025 (1SA-II 25005)] Calculate the mass in grams of 1.5 moles of CaCO₃ (Ca=40, C=12, O=16). (Answer: 150 g)
-5. [Verified Official - 1st Annual 2024 (1SA-I 24005)] Define Mole and Avogadro's Number; calculate moles in 3.011 × 10²⁴ molecules of CO₂. (Answer: 5 mol)
+═══ VERIFIED OFFICIAL FBISE MODEL & PAST PAPER QUESTIONS ═══
+
+1. [Verified Official - Final AF Model Paper Q1(vii) · 1 Mark · SLO C-09-B-47 · Application]
+   Predict which one of the following pairs has the same mass?
+   A) 1 mole of N₂O and 1 mole of CO₂   B) 1 mole of H₂ and 1 mole of NH₃
+   C) 1 mole of H₂O and 1 mole of H₂O₂  D) 1 mole of H₂SO₄ and 1 mole of HNO₃
+   (Correct: A — Both N₂O = 2(14)+16 = 44 g/mol and CO₂ = 12+2(16) = 44 g/mol.)
+
+2. [Verified Official - Final AF Model Paper Q2(ix) · 3 Marks (2+1) · SLO C-09-B-47 · Application]
+   Calculate the number of atoms in each of the following samples:
+   a. 3.4 moles of nitrogen gas [2 marks]  (Answer: 4.095 × 10²⁴ atoms, since N₂ has 2 atoms/molecule)
+   b. 15 g of Sodium metal [1 mark]        (Answer: 3.927 × 10²³ atoms)
+
+3. [Verified Official - 1st Annual 2026 (1SA-I 26005) · SLO C-09-B-47 [A]]
+   Calculate the number of molecules and total atoms in 18 g of glucose (C₆H₁₂O₆, M = 180 g/mol).
+   (Answer: n = 0.1 mol → 6.022 × 10²² molecules; 24 atoms/molecule → 1.445 × 10²⁴ total atoms.)
+
+4. [Verified Official - 1st Annual 2025 (1SA-I 25005) · SLO C-09-B-43 & 44 [K]]
+   Differentiate Empirical Formula and Molecular Formula with three examples from Table 6.1.
+
+5. [Verified Official - 2nd Annual 2025 (1SA-II 25005) · SLO C-09-B-47 [A]]
+   Calculate the mass in grams of 1.5 moles of CaCO₃ (Ca=40, C=12, O=16). (Answer: 150 g)
+
+6. [Verified Official - 1st Annual 2024 (1SA-I 24005) · SLO C-09-B-48 & 49 [K/U]]
+   Define Mole and Avogadro's Number; calculate moles in 3.011 × 10²⁴ molecules of CO₂. (Answer: 5 mol)
+
+═══ HIGH-YIELD SLO-BASED PRACTICE QUESTIONS (AF 2024) ═══
+7. [SLO C-09-B-45 [A]] Deduce the formula and name of binary ionic compounds formed by (a) Al³⁺ & S²⁻ (Al₂S₃, Aluminium sulphide), (b) Ca²⁺ & N³⁻ (Ca₃N₂, Calcium nitride).
+8. [SLO C-09-B-49 [U]] Why do 2 g of H₂ and 44 g of CO₂ occupy the same count of molecules despite having very different masses?
+9. [SLO C-09-B-50 [A]] Write balanced symbol and net ionic equations (with state symbols) for Mg(s) + H₂SO₄(aq) → MgSO₄(aq) + H₂(g) and identify the spectator ion (SO₄²⁻).
             """.trimIndent(),
             chapterSummary = """
-Stoichiometry links atomic masses to measurable gram quantities through Avogadro's number (6.022 × 10²³). Balancing equations preserves atoms, while cancelling spectator ions exposes the true chemical change in net ionic equations.
-خلاصہ: اسٹائکیومیٹری مول اور ایووگیڈرو نمبر کے ذریعے ایٹموں کی تعداد اور گرام میں کمیت کا حساب کتاب سکھاتی ہے۔
+Chapter 6 (12 periods, 10 Summative SLOs: C-09-B-42 to C-09-B-51; 4 K, 1 U, 5 A) bridges chemical formulas (empirical, molecular, structural, and binary ionic) to quantitative mole–mass–particle calculations via Avogadro's constant (6.022 × 10²³ / 6.02 × 10²³) and balanced chemical/net ionic equations with mandatory state symbols (s), (l), (g), (aq).
+خلاصہ: باب 6 (کل 10 امتحانی SLOs: 4 Knowledge، 1 Understanding، 5 Application) کیمیائی فارمولوں، ایووگیڈرو نمبر اور مول کے عددی سوالات، اور ریاستی علامات کے ساتھ متوازن و خالص آئونک مساواتوں پر مشتمل ہے۔
             """.trimIndent(),
-            sourceBasis = "NBF Grade 9 Textbook Ch 6 (pp. 96–113), NCP SLOs C-09-B-42..51, FBISE Model & 2024–2026 Papers"
+            sourceBasis = "NBF Grade 9 Ch 6 (pp. 96–113), FBISE AF 2024 SLOs C-09-B-42..51, Model & Past Papers [SLO-AF v2]"
         )
     )
 }
